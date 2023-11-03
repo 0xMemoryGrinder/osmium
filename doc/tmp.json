@@ -1,0 +1,44 @@
+{
+    "code-complexity" : {
+        "description": "Function has cyclomatic complexity 'current' but allowed no more than maxcompl.",
+        "category": "Best Practise Rules",
+        "options": [
+          {
+            "description": "severityDescription",
+            "default": "DEFAULT_SEVERITY"
+          },
+          {
+            "description": "Maximum allowed cyclomatic complexity",
+            "default": "DEFAULT_COMPLEXITY"
+          }
+        ],
+        "examples": {
+          "good": [
+            {
+              "description": "Low code complexity",
+              "code": "require('../../../test/fixtures/best-practises/code-complexity-low')"
+            }
+          ],
+          "bad": [
+            {
+              "description": "High code complexity",
+              "code": "require('../../../test/fixtures/best-practises/code-complexity-high')"
+            }
+          ]
+        }
+    },
+    "function-max-lines" : {
+        "description": "Function body contains 'count' lines but allowed no more than maxlines.",
+        "category": "'Best Practise Rules",
+        "options": [
+          {
+            "description": "severityDescription",
+            "default": "DEFAULT_SEVERITY"
+          },
+          {
+            "description": "Maximum allowed lines count per function",
+            "default": "DEFAULT_MAX_LINES_COUNT"
+          }
+        ]
+    }
+}
