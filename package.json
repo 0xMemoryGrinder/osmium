@@ -6,7 +6,8 @@
     "manager",
     "packages/*",
     "toolchains/*",
-    "libs/*"
+    "libs/*",
+    "doc"
   ],
   "main": "index.js",
   "license": "MIT",

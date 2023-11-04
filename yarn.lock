@@ -1376,6 +1376,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"doc@workspace:doc":
+  version: 0.0.0-use.local
+  resolution: "doc@workspace:doc"
+  dependencies:
+    retypeapp: "npm:^3.5.0"
+  languageName: unknown
+  linkType: soft
+
 "doctrine@npm:^3.0.0":
   version: 3.0.0
   resolution: "doctrine@npm:3.0.0"
@@ -3512,6 +3520,15 @@ __metadata:
   version: 0.12.0
   resolution: "retry@npm:0.12.0"
   checksum: 1f914879f97e7ee931ad05fe3afa629bd55270fc6cf1c1e589b6a99fab96d15daad0fa1a52a00c729ec0078045fe3e399bd4fd0c93bcc906957bdc17f89cb8e6
+  languageName: node
+  linkType: hard
+
+"retypeapp@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "retypeapp@npm:3.5.0"
+  bin:
+    retype: retype.js
+  checksum: 1af2e98319ed55439aa4b49ebd59ad145124f71085a07c8a754235d60579e2226f642930ec06ca559abe779f94cdeed3d4fd1bd50674ba07fed8c80b4bf4a041
   languageName: node
   linkType: hard
 

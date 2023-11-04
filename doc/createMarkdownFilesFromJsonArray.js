@@ -9,7 +9,7 @@ async function readFileContent(filePath) {
   }
 }
 
-function createFile(path, content) {
+function saveToFile(path, content) {
   fs.writeFile(path, content, 'utf8', (err) => {
     if (err) {
       console.error('Error creating the file:', err);
@@ -49,7 +49,7 @@ async function createMarkdownFilesFromJsonArray(path) {
     } else {
       content += `${key}: ${value}\n\n`;
     }
-    createFile(`./${key}.md`, content);
+    saveToFile(`./${key}.md`, content);
   }
 }
 

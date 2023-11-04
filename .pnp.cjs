@@ -14,6 +14,10 @@ const RAW_RUNTIME_STATE =
       "reference": "workspace:."\
     },\
     {\
+      "name": "doc",\
+      "reference": "workspace:doc"\
+    },\
+    {\
       "name": "@osmium-libs/ast-extractor",\
       "reference": "workspace:libs/ast-extractor"\
     },\
@@ -63,6 +67,7 @@ const RAW_RUNTIME_STATE =
     ["@osmium-libs/lsp-server-wrapper", ["workspace:libs/lsp-server-wrapper"]],\
     ["@osmium-packages/eslint-config", ["workspace:packages/eslint-config"]],\
     ["@osmium-packages/prettier-config", ["workspace:packages/prettier-config"]],\
+    ["doc", ["workspace:doc"]],\
     ["osmium", ["workspace:."]],\
     ["osmium-manager", ["workspace:manager"]],\
     ["osmium-solidity", ["workspace:toolchains/solidity"]],\
@@ -1843,6 +1848,16 @@ const RAW_RUNTIME_STATE =
           ["path-type", "npm:4.0.0"]\
         ],\
         "linkType": "HARD"\
+      }]\
+    ]],\
+    ["doc", [\
+      ["workspace:doc", {\
+        "packageLocation": "./doc/",\
+        "packageDependencies": [\
+          ["doc", "workspace:doc"],\
+          ["retypeapp", "npm:3.5.0"]\
+        ],\
+        "linkType": "SOFT"\
       }]\
     ]],\
     ["doctrine", [\
@@ -4216,6 +4231,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/retry-npm-0.12.0-72ac7fb4cc-1f914879f9.zip/node_modules/retry/",\
         "packageDependencies": [\
           ["retry", "npm:0.12.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["retypeapp", [\
+      ["npm:3.5.0", {\
+        "packageLocation": "./.yarn/unplugged/retypeapp-npm-3.5.0-c6e4adf3d1/node_modules/retypeapp/",\
+        "packageDependencies": [\
+          ["retypeapp", "npm:3.5.0"]\
         ],\
         "linkType": "HARD"\
       }]\
