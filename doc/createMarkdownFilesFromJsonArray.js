@@ -15,7 +15,6 @@ function createFile(path, content) {
       console.error('Error creating the file:', err);
       return;
     }
-    console.log('File created and content written successfully.');
   });
 }
 
@@ -23,13 +22,15 @@ function parseJSON(obj, depth) {
   let content = '';
   for (const prop in obj) {
     const value = obj[prop];
-    if (typeof value === 'object') {
-      console.log(`Property: ${prop} has nested properties:`);
+    if (prop === 'code' ) {
+      const blockCodeDelimiter = "```";
+      content += `${prop}: ${blockCodeDelimiter}${value}${blockCodeDelimiter}\n`;
+    }
+    else if (typeof value === 'object') {
       content += `${'#'.repeat(depth + 1)} ${prop}\n\n`;
       content += parseJSON(value, depth + 1); 
     } else {
-      console.log(`Property: ${prop}, Value: ${value}`);
-      content += `${prop}: ${value}\n`;
+      content += `${prop}: ${value}\n\n`;
     }
   }
   return content;
@@ -43,11 +44,10 @@ async function createMarkdownFilesFromJsonArray(path) {
     let content = '';
     const value = jsonContent[key];
     if (typeof value === 'object') {
-      console.log(`Property: ${key} has nested properties:`);
       content += `# ${key}\n\n`;
       content += parseJSON(value, depth); 
     } else {
-      content += `${key}: ${value}\n`;
+      content += `${key}: ${value}\n\n`;
     }
     createFile(`./${key}.md`, content);
   }
