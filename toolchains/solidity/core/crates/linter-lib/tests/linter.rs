@@ -172,4 +172,5 @@ test_directories! {
     PrivateVarsLeadingUnderscore,
     FoundryTestFunctions,
     AvoidTxOrigin,
+    SolidHunterIgnoreRule,
 }

@@ -92,6 +92,48 @@ impl SolidLinter {
         }
     }
 
+    fn _check_is_diag_ignored(&self, diag: &LintDiag, file: &SolidFile) -> bool {
+        let comments = file
+            .content
+            .lines()
+            .enumerate()
+            .filter_map(|(i, line)| {
+                for ignore in Ignore::iter() {
+                    let ignore_str = ignore.to_string();
+                    if line.contains(&ignore_str) {
+                        return Some((i + 1, ignore, line.split(&ignore_str).nth(1)));
+                    }
+                }
+                None
+            })
+            .collect::<Vec<(usize, Ignore, Option<&str>)>>();
+
+        for (line, ignore, rule_ids_str) in comments {
+            let rules_ids = rule_ids_str
+                .map(|s| {
+                    s.split(' ')
+                        .map(|s| s.trim())
+                        .filter(|s| !s.trim().is_empty())
+                        .collect::<Vec<&str>>()
+                })
+                .filter(|v| !v.is_empty());
+
+            if diag.range.start.line == line + if ignore == Ignore::NextLine { 1 } else { 0 } {
+                match rules_ids {
+                    Some(rules_ids) => {
+                        if rules_ids.contains(&diag.id.as_str()) {
+                            return true;
+                        }
+                    }
+                    None => {
+                        return true;
+                    }
+                }
+            }
+        }
+        false
+    }
+
     pub fn parse_file(&mut self, filepath: &str) -> LintResult {
         let content = fs::read_to_string(filepath)?;
         self.parse_content(filepath, content.as_str())
@@ -105,7 +147,11 @@ impl SolidLinter {
 
         for rule in &self.rules {
             let mut diags = rule.diagnose(&self.files[self.files.len() - 1], &self.files);
-            res.append(&mut diags);
+            for diag in &mut diags {
+                if !self._check_is_diag_ignored(diag, &self.files[self.files.len() - 1]) {
+                    res.push(diag.clone());
+                }
+            }
         }
         Ok(FileDiags::new(content.to_string(), res))
     }
