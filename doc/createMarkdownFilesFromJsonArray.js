@@ -22,13 +22,13 @@ function parseJSON(obj, depth) {
   let content = '';
   for (const prop in obj) {
     const value = obj[prop];
-    if (prop === 'code' ) {
+    if (prop === 'code') {
       const blockCodeDelimiter = "```";
       content += `${prop}: ${blockCodeDelimiter}${value}${blockCodeDelimiter}\n`;
     }
     else if (typeof value === 'object') {
       content += `${'#'.repeat(depth + 1)} ${prop}\n\n`;
-      content += parseJSON(value, depth + 1); 
+      content += parseJSON(value, depth + 1);
     } else {
       content += `${prop}: ${value}\n\n`;
     }
@@ -45,7 +45,7 @@ async function createMarkdownFilesFromJsonArray(path) {
     const value = jsonContent[key];
     if (typeof value === 'object') {
       content += `# ${key}\n\n`;
-      content += parseJSON(value, depth); 
+      content += parseJSON(value, depth);
     } else {
       content += `${key}: ${value}\n\n`;
     }
@@ -53,4 +53,18 @@ async function createMarkdownFilesFromJsonArray(path) {
   }
 }
 
-createMarkdownFilesFromJsonArray("./tmp.json");
+
+const args = process.argv.slice(2);
+filepath = "./docTree.json"
+
+if (args.length !== 0) {
+  filepath = args[0];
+}
+
+fs.access(filepath, fs.constants.F_OK)
+  .then(() => {
+    createMarkdownFilesFromJsonArray(filepath);
+  })
+  .catch((err) => {
+    console.error('Le fichier n\'existe pas.', err);
+  });
