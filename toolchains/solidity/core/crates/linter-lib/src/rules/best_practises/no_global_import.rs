@@ -37,12 +37,35 @@ impl RuleType for NoGlobalImport {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Import statement includes an entire file instead of selected symbols."
+                .to_string(),
+            category: "best-practices".to_string(),
             options: vec![],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![
+                    Example {
+                        description: "import names explicitly".to_string(),
+                        code: "import {A} from \"./A.sol\"".to_string(),
+                    },
+                    Example {
+                        description: "import entire file into a name".to_string(),
+                        code: "import \"./A.sol\" as A".to_string(),
+                    },
+                    Example {
+                        description: "import entire file into a name".to_string(),
+                        code: "import * as A from \"./A.sol\"".to_string(),
+                    },
+                ],
+                bad: vec![
+                    Example {
+                        description: "import all members from a file".to_string(),
+                        code: "import * from \"foo.sol\";".to_string(),
+                    },
+                    Example {
+                        description: "import an entire file".to_string(),
+                        code: "import \"foo.sol\"".to_string(),
+                    },
+                ],
             },
         }
     }

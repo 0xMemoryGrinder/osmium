@@ -53,9 +53,14 @@ impl RuleType for FunctionMaxLines {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
-            options: vec![],
+            description:
+                "Function body contains \"count\" lines but allowed no more than maxlines."
+                    .to_string(),
+            category: "best-practices".to_string(),
+            options: vec![Options {
+                description: "Maximum allowed lines count per function	".to_string(),
+                default: "50".to_string(),
+            }],
             examples: Examples {
                 good: vec![],
                 bad: vec![],

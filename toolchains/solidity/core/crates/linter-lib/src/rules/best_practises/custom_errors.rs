@@ -71,12 +71,37 @@ impl RuleType for CustomErrors {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Enforces the use of Custom Errors over Require and Revert statements"
+                .to_string(),
+            category: "best-practises".to_string(),
             options: vec![],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![
+                    Example {
+                        description: "Use Custom Errors".to_string(),
+                        code: "revert CustomErrorFunction();".to_string(),
+                    },
+                    Example {
+                        description: "Use of Custom Errors with arguments".to_string(),
+                        code: "revert CustomErrorFunction({ msg: \"Insufficient Balance\" });"
+                            .to_string(),
+                    },
+                ],
+                bad: vec![
+                    Example {
+                        description: "Use of require statement".to_string(),
+                        code: "require(userBalance >= availableAmount, \"Insufficient Balance\");"
+                            .to_string(),
+                    },
+                    Example {
+                        description: "Use of plain revert statement".to_string(),
+                        code: "revert();".to_string(),
+                    },
+                    Example {
+                        description: "Use of revert statement with message".to_string(),
+                        code: "revert(\"Insufficient Balance\");".to_string(),
+                    },
+                ],
             },
         }
     }

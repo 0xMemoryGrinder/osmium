@@ -57,12 +57,23 @@ impl RuleType for OneContractPerFile {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Imported object name is not being used by the contract.".to_string(),
+            category: "best-practices".to_string(),
             options: vec![],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![Example {
+                    description: "Imported object is being used".to_string(),
+                    code:
+                        "import { ERC20 } from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\n
+                        ontract MyToken is ERC20 {}"
+                            .to_string(),
+                }],
+                bad: vec![Example {
+                    description: "Imported object is not being used".to_string(),
+                    code: "import { ERC20 } from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";
+                        contract B {}"
+                        .to_string(),
+                }],
             },
         }
     }

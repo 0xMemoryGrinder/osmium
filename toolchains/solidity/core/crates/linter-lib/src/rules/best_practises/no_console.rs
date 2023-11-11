@@ -1,7 +1,7 @@
 use osmium_libs_solidity_ast_extractor::*;
 
 use crate::linter::SolidFile;
-use crate::rules::types::{Examples, RuleDocumentation, RuleEntry, RuleType};
+use crate::rules::types::{Example, Examples, RuleDocumentation, RuleEntry, RuleType};
 use crate::types::{LintDiag, Position, Range, Severity};
 
 // global
@@ -95,12 +95,18 @@ impl RuleType for NoConsole {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "No console.log/logInt/logBytesX/logString/etc & No hardhat and forge-std console.sol import statements.".to_string(),
+            category: "best-practices".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],
-                bad: vec![],
+                bad: vec![Example{description: "No console.logX statements".to_string(),
+                    code: "console.log('test').".to_string()},
+                    Example{description: "No hardhat/console.sol import statements".to_string(),
+                    code: "import 'hardhat/console.sol';".to_string()},
+                    Example{description: "No forge-std console.sol & console2.sol import statements".to_string(),
+                    code: "import 'forge-std/consoleN.sol';".to_string()},
+                ],
             },
         }
     }

@@ -72,9 +72,10 @@ impl RuleType for MaxStatesCount {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
-            options: vec![],
+            description: "Contract has \"some count\" states declarations but allowed no more than maxstates.".to_string(),
+            category: "best-practices".to_string(),
+            options: vec![Options{description: "Maximum allowed states declarations".to_string(),
+                default: "15".to_string(),}],
             examples: Examples {
                 good: vec![],
                 bad: vec![],

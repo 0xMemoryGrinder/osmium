@@ -40,12 +40,29 @@ impl RuleType for PayableFallback {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "When fallback is not payable you will not be able to receive ethers."
+                .to_string(),
+            category: "best-practices".to_string(),
             options: vec![],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![Example {
+                    description: "Fallback is payable".to_string(),
+                    code: "
+                        pragma solidity 0.4.4;\n\n
+                        contract A {\n
+                        function () public payable {}\n
+                        }"
+                    .to_string(),
+                }],
+                bad: vec![Example {
+                    description: "Fallback is not payable".to_string(),
+                    code: "
+                        pragma solidity 0.4.4;\n\n 
+                        contract A {\n
+                        function () public {}\n
+                        }"
+                    .to_string(),
+                }],
             },
         }
     }

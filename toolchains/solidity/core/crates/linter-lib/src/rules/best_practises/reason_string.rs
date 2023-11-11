@@ -1,7 +1,7 @@
 use osmium_libs_solidity_ast_extractor::*;
 
 use crate::linter::SolidFile;
-use crate::rules::types::{Examples, RuleDocumentation, RuleEntry, RuleType};
+use crate::rules::types::{Examples, Options, RuleDocumentation, RuleEntry, RuleType};
 use crate::types::{LintDiag, Position, Range, Severity};
 
 // global
@@ -131,9 +131,10 @@ impl RuleType for ReasonString {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
-            options: vec![],
+            description: "Require or revert statement must have a reason string and check that each reason string is at most N characters long.".to_string(),
+            category: "best-practices".to_string(),
+            options: vec![Options{description: "A JSON object with a single property \"maxLength\" specifying the max number of characters per reason string.".to_string(),
+                default: "{\"maxLength\":32}".to_string()}],
             examples: Examples {
                 good: vec![],
                 bad: vec![],

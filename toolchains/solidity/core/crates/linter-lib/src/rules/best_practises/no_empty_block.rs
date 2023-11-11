@@ -38,12 +38,36 @@ impl RuleType for NoEmptyBlock {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Code block has zero statements inside. Exceptions apply.".to_string(),
+            category: "best-practices".to_string(),
             options: vec![],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![
+                    Example {
+                        description: "Empty fallback function".to_string(),
+                        code: "fallback() external {}".to_string(),
+                    },
+                    Example {
+                        description: "Empty constructor with member initialization list"
+                            .to_string(),
+                        code: "constructor(uint param) Foo(param) Bar(param*2) { }".to_string(),
+                    },
+                ],
+                bad: vec![
+                    Example {
+                        description: "Empty block on if statement".to_string(),
+                        code: "if (condition) { }".to_string(),
+                    },
+                    Example {
+                        description: "Empty contract".to_string(),
+                        code: "contract Foo { }".to_string(),
+                    },
+                    Example {
+                        description: "Empty block in constructor without parent initialization"
+                            .to_string(),
+                        code: "constructor() { }".to_string(),
+                    },
+                ],
             },
         }
     }

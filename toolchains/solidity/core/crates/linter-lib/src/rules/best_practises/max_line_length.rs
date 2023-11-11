@@ -58,9 +58,12 @@ impl RuleType for MaxLineLength {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
-            options: vec![],
+            description: "Line length must be no more than maxlen.".to_string(),
+            category: "best-practices".to_string(),
+            options: vec![Options {
+                description: "Maximum allowed number of characters per line".to_string(),
+                default: "120".to_string(),
+            }],
             examples: Examples {
                 good: vec![],
                 bad: vec![],
