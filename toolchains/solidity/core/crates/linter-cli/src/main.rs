@@ -85,7 +85,7 @@ fn main() -> Result<(), SolidHunterError> {
         println!("These are all rules documentations");
         let linter: SolidLinter = SolidLinter::new_fileless();
 
-        println!("{:?}", linter.get_documentation());
+        println!("{:#?}", linter.get_documentation());
         return Ok(());
     }
 

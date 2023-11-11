@@ -49,6 +49,19 @@ impl RuleType for FunctionMaxLines {
         }
         res
     }
+
+    fn get_documentation(&self) -> RuleDocumentation {
+        RuleDocumentation {
+            id: RULE_ID.to_string(),
+            description: "".to_string(),
+            category: "".to_string(),
+            options: vec![],
+            examples: Examples {
+                good: vec![],
+                bad: vec![],
+            },
+        }
+    }
 }
 
 // returns a struct containing the line number of the start and end of the function if it is too long

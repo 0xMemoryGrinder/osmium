@@ -64,6 +64,12 @@ impl SolidLinter {
         Ok(())
     }
 
+    pub fn get_documentation(&self) -> Vec<RuleDocumentation> {
+        let mut res = Vec::new();
+        for rule in &self.rules {
+            res.push(rule.get_documentation())
+        }
+        res
     pub fn initialize_excluded_files(
         &mut self,
         excluded_filepaths: Option<&Vec<String>>,

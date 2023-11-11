@@ -47,6 +47,7 @@ pub struct Rules {
 
 pub trait RuleType: Send + Sync + 'static {
     fn diagnose(&self, file: &SolidFile, files: &[SolidFile]) -> Vec<LintDiag>;
+    fn get_documentation(&self) -> RuleDocumentation;
 }
 
 pub type RulesMap = HashMap<String, fn(RuleEntry) -> Box<dyn RuleType>>;

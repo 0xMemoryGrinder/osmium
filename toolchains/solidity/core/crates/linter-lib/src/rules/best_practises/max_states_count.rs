@@ -68,6 +68,19 @@ impl RuleType for MaxStatesCount {
         }
         res
     }
+
+    fn get_documentation(&self) -> RuleDocumentation {
+        RuleDocumentation {
+            id: RULE_ID.to_string(),
+            description: "".to_string(),
+            category: "".to_string(),
+            options: vec![],
+            examples: Examples {
+                good: vec![],
+                bad: vec![],
+            },
+        }
+    }
 }
 
 impl MaxStatesCount {
