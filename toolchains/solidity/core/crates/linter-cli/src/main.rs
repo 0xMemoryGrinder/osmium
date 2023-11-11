@@ -44,6 +44,14 @@ struct Args {
 
     #[arg(short = 'e', long = "exclude", help = "Specify excluded files")]
     exclude: Option<Vec<String>>,
+
+    #[arg(
+        short = 'd',
+        long = "documentation",
+        default_value = "false",
+        help = "exposes rules documentation"
+    )]
+    documentation: bool,
 }
 
 fn print_result(results: Vec<LintResult>) {
@@ -73,12 +81,17 @@ fn main() -> Result<(), SolidHunterError> {
         println!();
     }
 
+    if args.documentation {
+        println!("These are all rules documentations");
+    }
+
     if args.verbose {
         println!("Verbose output enabled");
         println!("Project path: {:?}", args.paths);
         println!("Using rules file: {}", args.rules_file);
         println!("Verbose output: {}", args.verbose);
         println!("Excluded files: {:?}", args.exclude);
+        println!("Documentation output: {}", args.documentation);
     }
 
     if args.init {

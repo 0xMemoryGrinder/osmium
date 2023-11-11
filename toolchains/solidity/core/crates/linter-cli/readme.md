@@ -32,6 +32,7 @@ Options:
   -h, --help                   Print help information
   -V, --version                Print version information
   -g, --ignore                 Specify ignore file
+  -d, --documentation          Exposes rules documentation
 ```
 
 ## Configuration
