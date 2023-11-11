@@ -40,8 +40,8 @@ impl RuleType for VisibilityModiferOrder {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Visibility modifier must be first in list of modifiers.".to_string(),
+            category: "order".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

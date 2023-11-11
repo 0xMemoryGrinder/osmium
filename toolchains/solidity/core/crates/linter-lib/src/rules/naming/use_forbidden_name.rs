@@ -65,8 +65,8 @@ impl RuleType for UseForbiddenName {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Avoid to use letters 'I', 'l', 'O' as identifiers.".to_string(),
+            category: "naming".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

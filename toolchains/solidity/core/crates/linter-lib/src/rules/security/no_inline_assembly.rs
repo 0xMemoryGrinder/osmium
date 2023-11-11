@@ -55,8 +55,9 @@ impl RuleType for NoInlineAssembly {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Avoid to use inline assembly. It is acceptable only in rare cases."
+                .to_string(),
+            category: "security".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

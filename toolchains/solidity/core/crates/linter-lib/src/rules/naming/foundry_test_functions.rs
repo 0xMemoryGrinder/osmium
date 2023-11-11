@@ -103,12 +103,36 @@ impl RuleType for FoundryTestFunctions {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
-            options: vec![],
+            description: "Enforce naming convention on functions for Foundry test cases"
+                .to_string(),
+            category: "naming".to_string(),
+            options: vec![Options {
+                description: "Array of function to be skipped".to_string(),
+                default: "[]".to_string(),
+            }],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![
+                    Example {
+                        description: "Foundry test case with correct Function declaration"
+                            .to_string(),
+                        code: "function test_NumberIs42() public {}".to_string(),
+                    },
+                    Example {
+                        description: "Foundry test case with correct Function declaration"
+                            .to_string(),
+                        code: "function testFail_Subtract43() public {}".to_string(),
+                    },
+                    Example {
+                        description: "Foundry test case with correct Function declaration"
+                            .to_string(),
+                        code: "function testFuzz_FuzzyTest() public {}".to_string(),
+                    },
+                ],
+                bad: vec![Example {
+                    description: "Foundry test case with incorrect Function declaration"
+                        .to_string(),
+                    code: "function numberIs42() public {}".to_string(),
+                }],
             },
         }
     }

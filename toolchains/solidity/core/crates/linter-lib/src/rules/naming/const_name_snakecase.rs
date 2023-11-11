@@ -71,8 +71,8 @@ impl RuleType for ConstNameSnakeCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Constant name must be in capitalized SNAKE_CASE. (Does not check IMMUTABLES, use immutable-vars-naming)".to_string(),
+            category: "naming".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

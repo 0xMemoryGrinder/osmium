@@ -80,12 +80,21 @@ impl RuleType for FuncVisibility {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
-            options: vec![],
+            description: "Explicitly mark visibility in function.".to_string(),
+            category: "security".to_string(),
+            options: vec![Options {
+                description: "A JSON object with a single property \"ignoreConstructors\" specifying if the rule should ignore constructors. (Note: This is required to be true for Solidity >=0.7.0 and false for <0.7.0)".to_string(),
+                default: "{\"ignoreConstructors\":false}".to_string(),
+            }],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![Example {
+                    description: "Functions explicitly marked with visibility".to_string(),
+                    code: "function b() internal { }\nfunction b() external { }\nfunction b() private { }\nfunction b() public { }\nconstructor() public { }".to_string(),
+                }],
+                bad: vec![Example {
+                    description: "Functions without explicitly marked visibility".to_string(),
+                    code: "function b() { }".to_string(),
+                }],
             },
         }
     }

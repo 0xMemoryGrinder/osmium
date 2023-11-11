@@ -58,12 +58,18 @@ impl RuleType for StateVisibility {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Explicitly mark visibility of state.".to_string(),
+            category: "security".to_string(),
             options: vec![],
             examples: Examples {
-                good: vec![],
-                bad: vec![],
+                good: vec![Example {
+                    description: "State explicitly marked with visibility".to_string(),
+                    code: "uint public data;".to_string(),
+                }],
+                bad: vec![Example {
+                    description: "Functions without explicitly marked visibility".to_string(),
+                    code: "uint data;".to_string(),
+                }],
             },
         }
     }

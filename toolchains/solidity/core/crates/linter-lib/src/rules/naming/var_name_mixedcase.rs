@@ -72,8 +72,8 @@ impl RuleType for VarNameMixedCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Variable name must be in mixedCase. (Does not check IMMUTABLES, use immutable-vars-naming)".to_string(),
+            category: "naming".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

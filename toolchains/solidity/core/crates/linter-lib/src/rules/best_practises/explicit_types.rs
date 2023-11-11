@@ -147,7 +147,6 @@ impl ExplicitTypes {
         let rule = ExplicitTypes { rule: value, data };
         Box::new(rule)
     }
-
     pub(crate) fn create_default() -> RuleEntry {
         RuleEntry {
             id: RULE_ID.to_string(),

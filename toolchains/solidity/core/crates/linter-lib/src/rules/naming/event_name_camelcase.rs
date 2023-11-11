@@ -81,8 +81,8 @@ impl RuleType for EventNameCamelCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Event name must be in CamelCase.".to_string(),
+            category: "naming".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

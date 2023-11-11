@@ -67,8 +67,8 @@ impl RuleType for FuncParamNameMixedCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
-            description: "".to_string(),
-            category: "".to_string(),
+            description: "Function param name must be in mixedCase.".to_string(),
+            category: "naming".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],
