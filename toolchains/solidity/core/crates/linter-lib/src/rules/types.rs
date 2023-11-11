@@ -5,6 +5,33 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Options {
+    pub description: String,
+    pub default: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Example {
+    pub description: String,
+    pub code: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Examples {
+    pub good: Option<Vec<Example>>,
+    pub bad: Option<Vec<Example>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct RuleDocumentation {
+    pub id: String,
+    pub description: String,
+    pub category: String,
+    pub options: Option<Vec<Options>>,
+    pub examples: Option<Examples>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RuleEntry {
     pub id: String,
     pub severity: Severity,
