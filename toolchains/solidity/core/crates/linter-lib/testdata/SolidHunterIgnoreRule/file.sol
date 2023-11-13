@@ -26,4 +26,33 @@ contract Test {
     function awesomeSameLineAny() public returns (address) {
         return tx.origin; // solidhunter-disable-line
     }
+
+    // solidhunter-disable
+    function awesome() public returns (address) {
+        return tx.origin;
+    }
+    // solidhunter-enable
+
+
+    // solidhunter-disable
+    // solidhunter-disable
+    // solidhunter-enable
+    function awesome() public returns (address) {
+        return tx.origin;
+    }
+    // solidhunter-enable
+
+    // solidhunter-disable avoid-tx-origin
+    function awesome() public returns (address) {
+        return tx.origin;
+    }
+    // solidhunter-enable avoid-tx-origin
+
+    // solidhunter-disable avoid-tx-origin
+    // solidhunter-disable
+    // solidhunter-enable avoid-tx-origin
+    function awesome() public returns (address) {
+        return tx.origin;
+    }
+    // solidhunter-enable
 }

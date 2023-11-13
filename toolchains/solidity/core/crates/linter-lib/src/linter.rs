@@ -92,6 +92,73 @@ impl SolidLinter {
         }
     }
 
+    fn _check_is_in_disable_range(
+        &self,
+        diag: &LintDiag,
+        ignore_states: &Vec<(usize, Ignore, Vec<&str>)>,
+    ) -> bool {
+        let mut rules_occurences: Vec<(&str, i32)> = Vec::new();
+        let ignore_states: Vec<(usize, Ignore, Vec<&str>)> = ignore_states
+            .iter()
+            .filter(|(line, _, _)| *line <= diag.range.start.line)
+            .map(|(line, ignore, rules)| (*line, *ignore, rules.to_vec()))
+            .map(|(line, ignore, rules)| {
+                if rules.is_empty() {
+                    (line, ignore, vec![""]) // empty rule means all rules
+                } else {
+                    (line, ignore, rules)
+                }
+            })
+            .collect::<Vec<(usize, Ignore, Vec<&str>)>>();
+
+        for (_, ignore, rules) in ignore_states {
+            match ignore {
+                Ignore::Disable => {
+                    for rule in rules {
+                        let mut found = false;
+                        for (rule_id, occurences) in &mut rules_occurences {
+                            if *rule_id == rule {
+                                *occurences += 1;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if !found {
+                            rules_occurences.push((rule, 1));
+                        }
+                    }
+                }
+                Ignore::Enable => {
+                    for rule in rules {
+                        for (rule_id, occurences) in &mut rules_occurences {
+                            if *rule_id == rule {
+                                *occurences -= 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        let disabled_rules = rules_occurences
+            .iter()
+            .filter(|(_, occurences)| *occurences > 0)
+            .map(|(rule, _)| *rule)
+            .collect::<Vec<&str>>();
+
+        for rule in disabled_rules {
+            if rule.is_empty() {
+                return true;
+            } else if rule == diag.id.as_str() {
+                return true;
+            }
+        }
+
+        false
+    }
+
     fn _check_is_diag_ignored(&self, diag: &LintDiag, file: &SolidFile) -> bool {
         let comments = file
             .content
@@ -108,29 +175,48 @@ impl SolidLinter {
             })
             .collect::<Vec<(usize, Ignore, Option<&str>)>>();
 
+        let mut ignore_states: Vec<(usize, Ignore, Vec<&str>)> = Vec::new();
+
         for (line, ignore, rule_ids_str) in comments {
             let rules_ids = rule_ids_str
                 .map(|s| {
                     s.split(' ')
                         .map(|s| s.trim())
-                        .filter(|s| !s.trim().is_empty())
+                        .filter(|s| !s.is_empty())
                         .collect::<Vec<&str>>()
                 })
-                .filter(|v| !v.is_empty());
+                .filter(|s| !s.is_empty());
 
-            if diag.range.start.line == line + if ignore == Ignore::NextLine { 1 } else { 0 } {
+            match ignore {
+                Ignore::Enable => {
+                    ignore_states.push((line, ignore, rules_ids.clone().unwrap_or(Vec::new())));
+                }
+                Ignore::Disable => {
+                    ignore_states.push((line, ignore, rules_ids.clone().unwrap_or(Vec::new())));
+                }
+                _ => {}
+            }
+
+            if diag.range.start.line == line + if ignore == Ignore::SameLine { 0 } else { 1 } {
                 match rules_ids {
+                    // If rules are specified, we ignore only the specified rules
                     Some(rules_ids) => {
                         if rules_ids.contains(&diag.id.as_str()) {
                             return true;
                         }
                     }
+                    // If no rules are specified, we ignore all rules
                     None => {
                         return true;
                     }
                 }
             }
         }
+
+        if self._check_is_in_disable_range(diag, &ignore_states) {
+            return true;
+        }
+
         false
     }
 
