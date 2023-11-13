@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+import { promises as fs } from 'fs';
 
 let filename = '';
 
@@ -11,13 +11,12 @@ async function readFileContent(filePath) {
   }
 }
 
-function saveToFile(path, content) {
-  fs.writeFile(path, content, 'utf8', (err) => {
-    if (err) {
-      console.error('Error creating the file:', err);
-      return;
-    }
-  });
+async function saveToFile(path, content) {
+  try {
+    await fs.writeFile(path, content, 'utf8');
+  } catch (err) {
+    console.error('Error creating the file:', err);
+  }
 }
 
 function parseJSON(obj, depth) {
@@ -44,7 +43,7 @@ function parseJSON(obj, depth) {
 async function createMarkdownFilesFromJsonArray(path) {
   const fileContent = await readFileContent(path);
   const jsonContent = JSON.parse(fileContent);
-  depth = 1;
+  let depth = 1;
   for (const key in jsonContent) {
     let content = '';
     const value = jsonContent[key];
@@ -54,18 +53,20 @@ async function createMarkdownFilesFromJsonArray(path) {
   }
 }
 
+async function main() {
+  const args = process.argv.slice(2);
+  let filepath = "./docTree.json"
 
-const args = process.argv.slice(2);
-filepath = "./docTree.json"
+  if (args.length !== 0) {
+    filepath = args[0];
+  }
 
-if (args.length !== 0) {
-  filepath = args[0];
+  try {
+    await fs.access(filepath, fs.constants.F_OK);
+    createMarkdownFilesFromJsonArray(filepath);
+  } catch (err) {
+    console.error('Le fichier n\'existe pas.', err);
+  }
 }
 
-fs.access(filepath, fs.constants.F_OK)
-  .then(() => {
-    createMarkdownFilesFromJsonArray(filepath);
-  })
-  .catch((err) => {
-    console.error('Le fichier n\'existe pas.', err);
-  });
+main();
