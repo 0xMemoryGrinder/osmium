@@ -1,5 +1,6 @@
-{
-    "code-complexity" : {
+[
+  {
+      "id": "code-complexity",
         "description": "Function has cyclomatic complexity 'current' but allowed no more than maxcompl.",
         "category": "Best Practise Rules",
         "options": [
@@ -27,7 +28,8 @@
           ]
         }
     },
-    "function-max-lines" : {
+    {
+      "id" : "function-max-lines",
         "description": "Function body contains 'count' lines but allowed no more than maxlines.",
         "category": "Best Practise Rules",
         "options": [
@@ -41,7 +43,8 @@
           }
         ]
     },
-    "custom-error": {
+    {
+      "id" : "custom-error",
       "description": "Enforces the use of Custom Errors over Require and Revert statements",
       "category": "Best Practise Rules",
       "options": [
@@ -76,5 +79,34 @@
           }
         ]
       }
+    },
+    {
+      "id" : "named-parameters-mapping",
+      "description": "Explicitly mark visibility in function.",
+      "category": "Security Rules",
+      "type": "security",
+      "example_config": "example de config",
+      "source_link": "https://github.com/eeeee",
+      "test_link": "https://github.com/eeeee",
+      "options": [
+        {
+          "description": "A JSON object with a single property \"ignoreConstructors\" specifying if the rule should ignore constructors. (**Note: This is required to be true for Solidity >=0.7.0 and false for <0.7.0**)",
+          "default": "UNE OPTION"
+        }
+      ],
+      "examples": {
+        "good": [
+          {
+            "description": "Functions explicitly marked with visibility",
+            "code": "require('../../../test/fixtures/security/functions-with-visibility').join('\n')"
+          }
+        ],
+        "bad": [
+          {
+            "description": "Functions without explicitly marked visibility",
+            "code": "require('../../../test/fixtures/security/functions-without-visibility').join('\n')"
+          }
+        ]
+      }
     }
-}
+  ]

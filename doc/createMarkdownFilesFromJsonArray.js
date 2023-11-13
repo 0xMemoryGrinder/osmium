@@ -1,5 +1,7 @@
 const fs = require('fs').promises;
 
+let filename = '';
+
 async function readFileContent(filePath) {
   try {
     const content = await fs.readFile(filePath, 'utf8');
@@ -22,7 +24,10 @@ function parseJSON(obj, depth) {
   let content = '';
   for (const prop in obj) {
     const value = obj[prop];
-    if (prop === 'code') {
+    if (prop === 'id') {
+      filename = value;
+    }
+    else if (prop === 'code') {
       const blockCodeDelimiter = "```";
       content += `${prop}: ${blockCodeDelimiter}${value}${blockCodeDelimiter}\n`;
     }
@@ -43,13 +48,9 @@ async function createMarkdownFilesFromJsonArray(path) {
   for (const key in jsonContent) {
     let content = '';
     const value = jsonContent[key];
-    if (typeof value === 'object') {
-      content += `# ${key}\n\n`;
-      content += parseJSON(value, depth);
-    } else {
-      content += `${key}: ${value}\n\n`;
-    }
-    saveToFile(`./${key}.md`, content);
+    const body = parseJSON(value, depth);
+    content += `# ${filename}\n\n` + body;
+    saveToFile(`./${filename}.md`, content);
   }
 }
 
