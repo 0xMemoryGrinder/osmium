@@ -21,6 +21,7 @@ async function saveToFile(path, content) {
 
 function id(value) {
   filename = value;
+  return "";
 }
 
 function code(value) {
@@ -29,7 +30,7 @@ function code(value) {
   return `${blockCodeDelimiter}${langage}\n${value}\n\n${blockCodeDelimiter}\n`;
 }
 
-const balise = ["id", "code"];
+const balises = ["id", "code"];
 const functions = [id, code];
 
 function parseJSON(obj, depth) {
@@ -43,8 +44,8 @@ function parseJSON(obj, depth) {
       continue;
     }
     let isText = true;
-    for (const elem in balise) {
-      if (prop === balise[elem]) {
+    for (const elem in balises) {
+      if (prop === balises[elem]) {
         isText = false;
         content += functions[elem](value);
       }
