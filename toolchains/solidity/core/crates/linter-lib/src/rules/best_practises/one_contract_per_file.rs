@@ -59,6 +59,10 @@ impl RuleType for OneContractPerFile {
             id: RULE_ID.to_string(),
             description: "Imported object name is not being used by the contract.".to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![Example {

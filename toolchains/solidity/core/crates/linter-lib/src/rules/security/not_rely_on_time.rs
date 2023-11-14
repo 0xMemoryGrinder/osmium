@@ -83,6 +83,10 @@ impl RuleType for NotRelyOnTime {
             id: RULE_ID.to_string(),
             description: "Avoid making time-based decisions in your business logic.".to_string(),
             category: "security".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

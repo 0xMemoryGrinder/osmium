@@ -58,6 +58,10 @@ impl RuleType for NoInlineAssembly {
             description: "Avoid to use inline assembly. It is acceptable only in rare cases."
                 .to_string(),
             category: "security".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

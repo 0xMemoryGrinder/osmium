@@ -133,6 +133,10 @@ impl RuleType for ReasonString {
             id: RULE_ID.to_string(),
             description: "Require or revert statement must have a reason string and check that each reason string is at most N characters long.".to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![Options{description: "A JSON object with a single property \"maxLength\" specifying the max number of characters per reason string.".to_string(),
                 default: "{\"maxLength\":32}".to_string()}],
             examples: Examples {

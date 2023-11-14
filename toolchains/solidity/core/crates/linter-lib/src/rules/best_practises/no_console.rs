@@ -97,6 +97,10 @@ impl RuleType for NoConsole {
             id: RULE_ID.to_string(),
             description: "No console.log/logInt/logBytesX/logString/etc & No hardhat and forge-std console.sol import statements.".to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

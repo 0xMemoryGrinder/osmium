@@ -74,6 +74,10 @@ impl RuleType for MaxStatesCount {
             id: RULE_ID.to_string(),
             description: "Contract has \"some count\" states declarations but allowed no more than maxstates.".to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![Options{description: "Maximum allowed states declarations".to_string(),
                 default: "15".to_string(),}],
             examples: Examples {

@@ -521,6 +521,10 @@ impl RuleType for Ordering {
             id: RULE_ID.to_string(),
             description: "Check order of elements in file and inside each contract, according to the style guide.".to_string(),
             category: "order".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

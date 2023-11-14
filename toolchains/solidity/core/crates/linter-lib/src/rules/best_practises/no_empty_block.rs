@@ -40,6 +40,10 @@ impl RuleType for NoEmptyBlock {
             id: RULE_ID.to_string(),
             description: "Code block has zero statements inside. Exceptions apply.".to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![

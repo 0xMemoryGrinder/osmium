@@ -122,6 +122,10 @@ impl RuleType for ExplicitTypes {
                 "Forbid or enforce explicit types (like uint256) that have an alias (like uint)."
                     .to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![Options {
                 description: "Options need to be one of \"explicit\", \"implicit\"".to_string(),
                 default: "explicit".to_string(),

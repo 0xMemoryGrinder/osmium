@@ -40,6 +40,10 @@ impl RuleType for NoGlobalImport {
             description: "Import statement includes an entire file instead of selected symbols."
                 .to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![

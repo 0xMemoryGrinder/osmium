@@ -70,6 +70,10 @@ impl RuleType for FuncNameMixedCase {
             id: RULE_ID.to_string(),
             description: "Function name must be in mixedCase.".to_string(),
             category: "naming".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

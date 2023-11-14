@@ -43,6 +43,10 @@ impl RuleType for PayableFallback {
             description: "When fallback is not payable you will not be able to receive ethers."
                 .to_string(),
             category: "best-practices".to_string(),
+            rule_type: "".to_string(),
+            example_config: "".to_string(),
+            source_link: "".to_string(),
+            test_link: "".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![Example {
