@@ -97,7 +97,11 @@ fn main() -> Result<(), SolidHunterError> {
 
     if !args.path.is_empty() {
         let mut linter: SolidLinter = SolidLinter::new();
-        linter.initialize_rules(&args.rules_file)?;
+        let mut path: String = args.rules_file;
+        if args.path != "." && path == ".solidhunter.json" {
+            path = args.path.as_str().to_owned() + "/" +  path.as_str();
+        }
+        linter.initialize_rules(&path)?;
 
         let result = linter.parse_path(&args.path);
         if !args.to_json {
