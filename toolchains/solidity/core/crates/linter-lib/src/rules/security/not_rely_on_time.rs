@@ -1,7 +1,7 @@
 use crate::linter::SolidFile;
 use crate::rules::types::*;
 use crate::types::*;
-use osmium_libs_solidity_ast_extractor::*;
+use osmium_libs_solidity_ast_extractor::LineColumn;
 
 // global
 pub const RULE_ID: &str = "not-rely-on-time";
@@ -83,10 +83,9 @@ impl RuleType for NotRelyOnTime {
             id: RULE_ID.to_string(),
             description: "Avoid making time-based decisions in your business logic.".to_string(),
             category: "security".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/security/not_rely_on_time.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/NotRelyOnTime".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![],

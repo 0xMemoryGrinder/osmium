@@ -60,10 +60,9 @@ impl RuleType for StateVisibility {
             id: RULE_ID.to_string(),
             description: "Explicitly mark visibility of state.".to_string(),
             category: "security".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/security/state_visibility.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![Example {

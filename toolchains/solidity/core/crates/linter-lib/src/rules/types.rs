@@ -27,7 +27,6 @@ pub struct RuleDocumentation {
     pub id: String,
     pub description: String,
     pub category: String,
-    pub rule_type: String,
     pub example_config: String,
     pub source_link: String,
     pub test_link: String,

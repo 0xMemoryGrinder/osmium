@@ -122,10 +122,9 @@ impl RuleType for ExplicitTypes {
                 "Forbid or enforce explicit types (like uint256) that have an alias (like uint)."
                     .to_string(),
             category: "best-practices".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/explicit_types.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/ExplicitTypes".to_string(),
             options: vec![Options {
                 description: "Options need to be one of \"explicit\", \"implicit\"".to_string(),
                 default: "explicit".to_string(),

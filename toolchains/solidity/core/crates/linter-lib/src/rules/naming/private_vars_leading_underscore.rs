@@ -156,10 +156,9 @@ impl RuleType for PrivateVarsLeadingUnderscore {
             id: RULE_ID.to_string(),
             description: "Non-external functions and state variables should start with a single underscore. Others, shouldn't".to_string(),
             category: "naming".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/naming/private_vars_leading_underscore.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/PrivateVarsLeadingUnderscore".to_string(),
             options: vec![Options {
                 description: "A JSON object with a single property \"strict\" specifying if the rule should apply to ALL non state variables. Default: { strict: false }.".to_string(),
                 default: "{\"strict\":false}".to_string(),

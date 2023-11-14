@@ -43,10 +43,9 @@ impl RuleType for PayableFallback {
             description: "When fallback is not payable you will not be able to receive ethers."
                 .to_string(),
             category: "best-practices".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/payable_fallback.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/PayableFallback".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![Example {

@@ -82,10 +82,9 @@ impl RuleType for FuncVisibility {
             id: RULE_ID.to_string(),
             description: "Explicitly mark visibility in function.".to_string(),
             category: "security".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/security/func_visibility.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/FuncVisibility".to_string(),
             options: vec![Options {
                 description: "A JSON object with a single property \"ignoreConstructors\" specifying if the rule should ignore constructors. (Note: This is required to be true for Solidity >=0.7.0 and false for <0.7.0)".to_string(),
                 default: "{\"ignoreConstructors\":false}".to_string(),

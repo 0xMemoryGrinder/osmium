@@ -74,10 +74,9 @@ impl RuleType for CustomErrors {
             description: "Enforces the use of Custom Errors over Require and Revert statements"
                 .to_string(),
             category: "best-practises".to_string(),
-            rule_type: "".to_string(),
             example_config: "".to_string(),
-            source_link: "".to_string(),
-            test_link: "".to_string(),
+            source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/custom_errors.rs".to_string(),
+            test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/CustomErrors".to_string(),
             options: vec![],
             examples: Examples {
                 good: vec![

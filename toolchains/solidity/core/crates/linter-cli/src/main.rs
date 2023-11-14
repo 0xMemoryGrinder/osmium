@@ -85,7 +85,15 @@ fn main() -> Result<(), SolidHunterError> {
         println!("These are all rules documentations");
         let linter: SolidLinter = SolidLinter::new_fileless();
 
-        println!("{:#?}", linter.get_documentation());
+        let json = serde_json::to_string_pretty(&linter.get_documentation());
+        match json {
+            Ok(j) => {
+                println!("{}", j);
+            }
+            Err(e) => {
+                println!("{}", e);
+            }
+        }
         return Ok(());
     }
 
