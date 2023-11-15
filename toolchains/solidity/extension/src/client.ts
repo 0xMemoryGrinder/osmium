@@ -14,26 +14,27 @@ import {
 	TransportKind
 } from 'vscode-languageclient/node';
 
-let client: LanguageClient;
+let coreClient: LanguageClient;
+let foundryClient: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
 	// The server is implemented in node
-	const serverModule = context.asAbsolutePath(
+	const coreServerModule = context.asAbsolutePath(
 		path.join('dist', 'server.js')
 	);
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
-	const serverOptions: ServerOptions = {
-		run: { module: serverModule, transport: TransportKind.ipc },
+	const coreServerOptions: ServerOptions = {
+		run: { module: coreServerModule, transport: TransportKind.ipc },
 		debug: {
-			module: serverModule,
+			module: coreServerModule,
 			transport: TransportKind.ipc,
 		}
 	};
 
 	// Options to control the language client
-	const clientOptions: LanguageClientOptions = {
+	const coreClientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
 		documentSelector: [{ scheme: 'file', language: 'solidity' }],
 		synchronize: {
@@ -43,15 +44,42 @@ export async function activate(context: ExtensionContext) {
 	};
 
 	// Create the language client and start the client.
-	client = new LanguageClient(
+	coreClient = new LanguageClient(
 		'osmium-solidity',
 		'Osmium Solidity Language Server',
-		serverOptions,
-		clientOptions
+		coreServerOptions,
+		coreClientOptions
 	);
 
-	// Start the client. This will also launch the server
-	client.start();
+	// The server is a binary executable
+	const foundryServerBinary = context.asAbsolutePath(
+		path.join('dist', 'foundry-server')
+	);
+
+	const foundryServerOptions: ServerOptions = {
+		run: { command: foundryServerBinary, transport: TransportKind.stdio },
+		debug: { command: foundryServerBinary, transport: TransportKind.stdio }
+	};
+
+	// Options to control the language client
+	const foundryClientOptions: LanguageClientOptions = {
+		// Register the server for plain text documents
+		documentSelector: [{ scheme: 'file', language: 'solidity' }],
+		synchronize: {
+			// Notify the server about file changes to '.clientrc files contained in the workspace
+			fileEvents: workspace.createFileSystemWatcher('**/foundry.toml')
+		}
+	};
+
+	foundryClient = new LanguageClient(
+		'osmium-foundry',
+		'Osmium Foundry Language Server',
+		foundryServerOptions,
+		foundryClientOptions
+	);
+	// Start the clients. This will also launch the servers
+	coreClient.start();
+	foundryClient.start();
 
 	const folders = workspace.workspaceFolders;
 	if (folders) {
@@ -65,8 +93,8 @@ export async function activate(context: ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
+	if (!coreClient) {
 		return undefined;
 	}
-	return client.stop();
+	return coreClient.stop();
 }

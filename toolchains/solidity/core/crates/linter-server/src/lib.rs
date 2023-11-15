@@ -18,7 +18,7 @@ struct Backend {
 }
 
 impl Handler for Backend {
-    fn initialize(&self, _: InitializeParams) -> Result<InitializeResult> {
+    fn initialize(&mut self, _: InitializeParams) -> Result<InitializeResult> {
         eprintln!("starting example main loop");
         Ok(InitializeResult {
             server_info: None,
@@ -31,7 +31,7 @@ impl Handler for Backend {
         })
     }
 
-    fn initialized(&self, _: InitializedParams) {
+    fn initialized(&mut self, _: InitializedParams) {
         eprintln!(
             "Initializing server with config file: {:?}",
             self.config_file_path
@@ -39,9 +39,9 @@ impl Handler for Backend {
         self.connection
             .log_message(MessageType::INFO, "Server initialized!");
 
-        if std::path::Path::new(&self.config_file_path).is_file() {
+        if std::path::Path::new(&mut self.config_file_path).is_file() {
             let mut linter = SolidLinter::new();
-            let res = linter.initialize_rules(&self.config_file_path);
+            let res = linter.initialize_rules(&mut self.config_file_path);
             if let Err(e) = res {
                 eprintln!("Error initializing rules: {:?}", e);
                 self.linter
@@ -60,7 +60,7 @@ impl Handler for Backend {
             .log_message(MessageType::INFO, "Linter initialized!");
     }
 
-    fn shutdown(&self) -> Result<()> {
+    fn shutdown(&mut self) -> Result<()> {
         self.connection
             .log_message(MessageType::INFO, "Server shutdown!");
         Ok(())

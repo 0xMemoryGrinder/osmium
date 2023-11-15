@@ -1,6 +1,6 @@
-use linter_server::create_linter;
-use osmium_libs_lsp_handler::{Connection, Dispatcher};
 use wasm_bindgen::prelude::*;
+use osmium_libs_lsp_handler::{Connection, Dispatcher};
+use linter_server::create_linter;
 
 #[wasm_bindgen]
 pub fn create_extension(

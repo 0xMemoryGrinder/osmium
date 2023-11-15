@@ -21,7 +21,7 @@ pub trait Handler {
     ///
     /// This method is guaranteed to only execute once. If the client sends this request to the
     /// server again, the server will respond with JSON-RPC error code `-32600` (invalid request).
-    fn initialize(&self, params: InitializeParams) -> Result<InitializeResult>;
+    fn initialize(&mut self, params: InitializeParams) -> Result<InitializeResult>;
 
     /// The [`initialized`] notification is sent from the client to the server after the client
     /// received the result of the initialize request but before the client sends anything else.
@@ -30,7 +30,7 @@ pub trait Handler {
     ///
     /// The server can use the `initialized` notification, for example, to dynamically register
     /// capabilities with the client.
-    fn initialized(&self, params: InitializedParams) {
+    fn initialized(&mut self, params: InitializedParams) {
         let _ = params;
     }
 
@@ -45,7 +45,7 @@ pub trait Handler {
     ///
     /// This method is guaranteed to only execute once. If the client sends this request to the
     /// server again, the server will respond with JSON-RPC error code `-32600` (invalid request).
-    fn shutdown(&self) -> Result<()>;
+    fn shutdown(&mut self) -> Result<()>;
 
     // Document Synchronization
 
@@ -57,7 +57,7 @@ pub trait Handler {
     /// The document's truth is now managed by the client and the server must not try to read the
     /// document’s truth using the document's URI. "Open" in this sense means it is managed by the
     /// client. It doesn't necessarily mean that its content is presented in an editor.
-    fn did_open(&self, params: DidOpenTextDocumentParams) {
+    fn did_open(&mut self, params: DidOpenTextDocumentParams) {
         let _ = params;
         log("Got a textDocument/didOpen notification, but it is not implemented");
     }
@@ -69,7 +69,7 @@ pub trait Handler {
     ///
     /// This notification will contain a distinct version tag and a list of edits made to the
     /// document for the server to interpret.
-    fn did_change(&self, params: DidChangeTextDocumentParams) {
+    fn did_change(&mut self, params: DidChangeTextDocumentParams) {
         let _ = params;
         log("Got a textDocument/didChange notification, but it is not implemented");
     }
@@ -78,7 +78,7 @@ pub trait Handler {
     /// document is actually saved.
     ///
     /// [`textDocument/willSave`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_willSave
-    fn will_save(&self, params: WillSaveTextDocumentParams) {
+    fn will_save(&mut self, params: WillSaveTextDocumentParams) {
         let _ = params;
         log("Got a textDocument/willSave notification, but it is not implemented");
     }
@@ -94,7 +94,7 @@ pub trait Handler {
     /// Please note that clients might drop results if computing the text edits took too long or if
     /// a server constantly fails on this request. This is done to keep the save fast and reliable.
     fn will_save_wait_until(
-        &self,
+        &mut self,
         params: WillSaveTextDocumentParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         let _ = params;
@@ -106,7 +106,7 @@ pub trait Handler {
     /// document was saved in the client.
     ///
     /// [`textDocument/didSave`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_didSave
-    fn did_save(&self, params: DidSaveTextDocumentParams) {
+    fn did_save(&mut self, params: DidSaveTextDocumentParams) {
         let _ = params;
         log("Got a textDocument/didSave notification, but it is not implemented");
     }
@@ -118,7 +118,7 @@ pub trait Handler {
     ///
     /// The document's truth now exists where the document's URI points to (e.g. if the document's
     /// URI is a file URI, the truth now exists on disk).
-    fn did_close(&self, params: DidCloseTextDocumentParams) {
+    fn did_close(&mut self, params: DidCloseTextDocumentParams) {
         let _ = params;
         log("Got a textDocument/didClose notification, but it is not implemented");
     }
@@ -143,7 +143,7 @@ pub trait Handler {
     /// InitializeParams::capabilities::text_document::declaration::link_support
     /// ```
     fn goto_declaration(
-        &self,
+        &mut self,
         params: GotoDeclarationParams,
     ) -> Result<Option<GotoDeclarationResponse>> {
         let _ = params;
@@ -167,7 +167,7 @@ pub trait Handler {
     /// InitializeParams::capabilities::text_document::definition::link_support
     /// ```
     fn goto_definition(
-        &self,
+        &mut self,
         params: GotoDefinitionParams,
     ) -> Result<Option<GotoDefinitionResponse>> {
         let _ = params;
@@ -193,7 +193,7 @@ pub trait Handler {
     /// InitializeParams::capabilities::text_document::type_definition::link_support
     /// ```
     fn goto_type_definition(
-        &self,
+        &mut self,
         params: GotoTypeDefinitionParams,
     ) -> Result<Option<GotoTypeDefinitionResponse>> {
         let _ = params;
@@ -219,7 +219,7 @@ pub trait Handler {
     /// InitializeParams::capabilities::text_document::implementation::link_support
     /// ```
     fn goto_implementation(
-        &self,
+        &mut self,
         params: GotoImplementationParams,
     ) -> Result<Option<GotoImplementationResponse>> {
         let _ = params;
@@ -232,7 +232,7 @@ pub trait Handler {
     ///
     /// [`textDocument/references`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_references
 
-    fn references(&self, params: ReferenceParams) -> Result<Option<Vec<Location>>> {
+    fn references(&mut self, params: ReferenceParams) -> Result<Option<Vec<Location>>> {
         let _ = params;
         log("Got a textDocument/references request, but it is not implemented");
         Err(Error::method_not_found())
@@ -257,7 +257,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
     fn prepare_call_hierarchy(
-        &self,
+        &mut self,
         params: CallHierarchyPrepareParams,
     ) -> Result<Option<Vec<CallHierarchyItem>>> {
         let _ = params;
@@ -278,7 +278,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
     fn incoming_calls(
-        &self,
+        &mut self,
         params: CallHierarchyIncomingCallsParams,
     ) -> Result<Option<Vec<CallHierarchyIncomingCall>>> {
         let _ = params;
@@ -299,7 +299,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
     fn outgoing_calls(
-        &self,
+        &mut self,
         params: CallHierarchyOutgoingCallsParams,
     ) -> Result<Option<Vec<CallHierarchyOutgoingCall>>> {
         let _ = params;
@@ -324,7 +324,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0.
     fn prepare_type_hierarchy(
-        &self,
+        &mut self,
         params: TypeHierarchyPrepareParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let _ = params;
@@ -344,7 +344,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0.
     fn supertypes(
-        &self,
+        &mut self,
         params: TypeHierarchySupertypesParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let _ = params;
@@ -364,7 +364,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0.
     fn subtypes(
-        &self,
+        &mut self,
         params: TypeHierarchySubtypesParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let _ = params;
@@ -383,7 +383,7 @@ pub trait Handler {
     /// This request differs slightly from `textDocument/references` in that this one is allowed to
     /// be more fuzzy.
     fn document_highlight(
-        &self,
+        &mut self,
         params: DocumentHighlightParams,
     ) -> Result<Option<Vec<DocumentHighlight>>> {
         let _ = params;
@@ -408,7 +408,7 @@ pub trait Handler {
     /// ```text
     /// InitializeParams::capabilities::text_document::document_link::tooltip_support
     /// ```
-    fn document_link(&self, params: DocumentLinkParams) -> Result<Option<Vec<DocumentLink>>> {
+    fn document_link(&mut self, params: DocumentLinkParams) -> Result<Option<Vec<DocumentLink>>> {
         let _ = params;
         log("Got a textDocument/documentLink request, but it is not implemented");
         Err(Error::method_not_found())
@@ -421,7 +421,7 @@ pub trait Handler {
     ///
     /// A document link is a range in a text document that links to an internal or external
     /// resource, like another text document or a web site.
-    fn document_link_resolve(&self, params: DocumentLink) -> Result<DocumentLink> {
+    fn document_link_resolve(&mut self, params: DocumentLink) -> Result<DocumentLink> {
         let _ = params;
         log("Got a documentLink/resolve request, but it is not implemented");
         Err(Error::method_not_found())
@@ -434,7 +434,7 @@ pub trait Handler {
     ///
     /// Such hover information typically includes type signature information and inline
     /// documentation for the symbol at the given text document position.
-    fn hover(&self, params: HoverParams) -> Result<Option<Hover>> {
+    fn hover(&mut self, params: HoverParams) -> Result<Option<Hover>> {
         let _ = params;
         log("Got a textDocument/hover request, but it is not implemented");
         Err(Error::method_not_found())
@@ -445,7 +445,7 @@ pub trait Handler {
     ///
     /// [`textDocument/codeLens`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_codeLens
 
-    fn code_lens(&self, params: CodeLensParams) -> Result<Option<Vec<CodeLens>>> {
+    fn code_lens(&mut self, params: CodeLensParams) -> Result<Option<Vec<CodeLens>>> {
         let _ = params;
         log("Got a textDocument/codeLens request, but it is not implemented");
         Err(Error::method_not_found())
@@ -456,7 +456,7 @@ pub trait Handler {
     ///
     /// [`codeLens/resolve`]: https://microsoft.github.io/language-server-protocol/specification#codeLens_resolve
 
-    fn code_lens_resolve(&self, params: CodeLens) -> Result<CodeLens> {
+    fn code_lens_resolve(&mut self, params: CodeLens) -> Result<CodeLens> {
         let _ = params;
         log("Got a codeLens/resolve request, but it is not implemented");
         Err(Error::method_not_found())
@@ -471,7 +471,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.10.0.
 
-    fn folding_range(&self, params: FoldingRangeParams) -> Result<Option<Vec<FoldingRange>>> {
+    fn folding_range(&mut self, params: FoldingRangeParams) -> Result<Option<Vec<FoldingRange>>> {
         let _ = params;
         log("Got a textDocument/foldingRange request, but it is not implemented");
         Err(Error::method_not_found())
@@ -490,7 +490,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.15.0.
 
-    fn selection_range(&self, params: SelectionRangeParams) -> Result<Option<Vec<SelectionRange>>> {
+    fn selection_range(&mut self, params: SelectionRangeParams) -> Result<Option<Vec<SelectionRange>>> {
         let _ = params;
         log("Got a textDocument/selectionRange request, but it is not implemented");
         Err(Error::method_not_found())
@@ -510,7 +510,7 @@ pub trait Handler {
     ///   document.
 
     fn document_symbol(
-        &self,
+        &mut self,
         params: DocumentSymbolParams,
     ) -> Result<Option<DocumentSymbolResponse>> {
         let _ = params;
@@ -535,7 +535,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.16.0.
 
     fn semantic_tokens_full(
-        &self,
+        &mut self,
         params: SemanticTokensParams,
     ) -> Result<Option<SemanticTokensResult>> {
         let _ = params;
@@ -556,7 +556,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.16.0.
 
     fn semantic_tokens_full_delta(
-        &self,
+        &mut self,
         params: SemanticTokensDeltaParams,
     ) -> Result<Option<SemanticTokensFullDeltaResult>> {
         let _ = params;
@@ -582,7 +582,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.16.0.
 
     fn semantic_tokens_range(
-        &self,
+        &mut self,
         params: SemanticTokensRangeParams,
     ) -> Result<Option<SemanticTokensRangeResult>> {
         let _ = params;
@@ -600,7 +600,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0.
 
-    fn inline_value(&self, params: InlineValueParams) -> Result<Option<Vec<InlineValue>>> {
+    fn inline_value(&mut self, params: InlineValueParams) -> Result<Option<Vec<InlineValue>>> {
         let _ = params;
         log("Got a textDocument/inlineValue request, but it is not implemented");
         Err(Error::method_not_found())
@@ -616,7 +616,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0
 
-    fn inlay_hint(&self, params: InlayHintParams) -> Result<Option<Vec<InlayHint>>> {
+    fn inlay_hint(&mut self, params: InlayHintParams) -> Result<Option<Vec<InlayHint>>> {
         let _ = params;
         log("Got a textDocument/inlayHint request, but it is not implemented");
         Err(Error::method_not_found())
@@ -645,7 +645,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0
 
-    fn inlay_hint_resolve(&self, params: InlayHint) -> Result<InlayHint> {
+    fn inlay_hint_resolve(&mut self, params: InlayHint) -> Result<InlayHint> {
         let _ = params;
         log("Got a inlayHint/resolve request, but it is not implemented");
         Err(Error::method_not_found())
@@ -675,7 +675,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
 
-    fn moniker(&self, params: MonikerParams) -> Result<Option<Vec<Moniker>>> {
+    fn moniker(&mut self, params: MonikerParams) -> Result<Option<Vec<Moniker>>> {
         let _ = params;
         log("Got a textDocument/moniker request, but it is not implemented");
         Err(Error::method_not_found())
@@ -700,7 +700,7 @@ pub trait Handler {
     /// must be provided in the `textDocument/completion` response and must not be changed during
     /// resolve.
 
-    fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
+    fn completion(&mut self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
         let _ = params;
         log("Got a textDocument/completion request, but it is not implemented");
         Err(Error::method_not_found())
@@ -711,7 +711,7 @@ pub trait Handler {
     ///
     /// [`completionItem/resolve`]: https://microsoft.github.io/language-server-protocol/specification#completionItem_resolve
 
-    fn completion_resolve(&self, params: CompletionItem) -> Result<CompletionItem> {
+    fn completion_resolve(&mut self, params: CompletionItem) -> Result<CompletionItem> {
         let _ = params;
         log("Got a completionItem/resolve request, but it is not implemented");
         Err(Error::method_not_found())
@@ -733,7 +733,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.17.0.
 
     fn diagnostic(
-        &self,
+        &mut self,
         params: DocumentDiagnosticParams,
     ) -> Result<DocumentDiagnosticReportResult> {
         let _ = params;
@@ -771,7 +771,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.17.0.
 
     fn workspace_diagnostic(
-        &self,
+        &mut self,
         params: WorkspaceDiagnosticParams,
     ) -> Result<WorkspaceDiagnosticReportResult> {
         let _ = params;
@@ -784,7 +784,7 @@ pub trait Handler {
     ///
     /// [`textDocument/signatureHelp`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_signatureHelp
 
-    fn signature_help(&self, params: SignatureHelpParams) -> Result<Option<SignatureHelp>> {
+    fn signature_help(&mut self, params: SignatureHelpParams) -> Result<Option<SignatureHelp>> {
         let _ = params;
         log("Got a textDocument/signatureHelp request, but it is not implemented");
         Err(Error::method_not_found())
@@ -844,7 +844,7 @@ pub trait Handler {
     ///   information. However it allows them to better group code action, for example, into
     ///   corresponding menus (e.g. all refactor code actions into a refactor menu).
 
-    fn code_action(&self, params: CodeActionParams) -> Result<Option<CodeActionResponse>> {
+    fn code_action(&mut self, params: CodeActionParams) -> Result<Option<CodeActionResponse>> {
         let _ = params;
         log("Got a textDocument/codeAction request, but it is not implemented");
         Err(Error::method_not_found())
@@ -862,7 +862,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
 
-    fn code_action_resolve(&self, params: CodeAction) -> Result<CodeAction> {
+    fn code_action_resolve(&mut self, params: CodeAction) -> Result<CodeAction> {
         let _ = params;
         log("Got a codeAction/resolve request, but it is not implemented");
         Err(Error::method_not_found())
@@ -883,7 +883,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.6.0.
 
-    fn document_color(&self, params: DocumentColorParams) -> Result<Vec<ColorInformation>> {
+    fn document_color(&mut self, params: DocumentColorParams) -> Result<Vec<ColorInformation>> {
         let _ = params;
         log("Got a textDocument/documentColor request, but it is not implemented");
         Err(Error::method_not_found())
@@ -907,7 +907,7 @@ pub trait Handler {
     /// resolve request for the [`textDocument/documentColor`](Self::document_color) request.
 
     fn color_presentation(
-        &self,
+        &mut self,
         params: ColorPresentationParams,
     ) -> Result<Vec<ColorPresentation>> {
         let _ = params;
@@ -920,7 +920,7 @@ pub trait Handler {
     ///
     /// [`textDocument/formatting`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_formatting
 
-    fn formatting(&self, params: DocumentFormattingParams) -> Result<Option<Vec<TextEdit>>> {
+    fn formatting(&mut self, params: DocumentFormattingParams) -> Result<Option<Vec<TextEdit>>> {
         let _ = params;
         log("Got a textDocument/formatting request, but it is not implemented");
         Err(Error::method_not_found())
@@ -932,7 +932,7 @@ pub trait Handler {
     /// [`textDocument/rangeFormatting`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_rangeFormatting
 
     fn range_formatting(
-        &self,
+        &mut self,
         params: DocumentRangeFormattingParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         let _ = params;
@@ -946,7 +946,7 @@ pub trait Handler {
     /// [`textDocument/onTypeFormatting`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_onTypeFormatting
 
     fn on_type_formatting(
-        &self,
+        &mut self,
         params: DocumentOnTypeFormattingParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         let _ = params;
@@ -960,7 +960,7 @@ pub trait Handler {
     ///
     /// [`textDocument/rename`]: https://microsoft.github.io/language-server-protocol/specification#textDocument_rename
 
-    fn rename(&self, params: RenameParams) -> Result<Option<WorkspaceEdit>> {
+    fn rename(&mut self, params: RenameParams) -> Result<Option<WorkspaceEdit>> {
         let _ = params;
         log("Got a textDocument/rename request, but it is not implemented");
         Err(Error::method_not_found())
@@ -976,7 +976,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.12.0.
 
     fn prepare_rename(
-        &self,
+        &mut self,
         params: TextDocumentPositionParams,
     ) -> Result<Option<PrepareRenameResponse>> {
         let _ = params;
@@ -1001,7 +1001,7 @@ pub trait Handler {
     /// This request was introduced in specification version 3.16.0.
 
     fn linked_editing_range(
-        &self,
+        &mut self,
         params: LinkedEditingRangeParams,
     ) -> Result<Option<LinkedEditingRanges>> {
         let _ = params;
@@ -1028,7 +1028,7 @@ pub trait Handler {
     /// Servers can only use this new model if clients advertise support for it via the
     /// `workspace.symbol.resolve_support` capability.
 
-    fn symbol(&self, params: WorkspaceSymbolParams) -> Result<Option<Vec<SymbolInformation>>> {
+    fn symbol(&mut self, params: WorkspaceSymbolParams) -> Result<Option<Vec<SymbolInformation>>> {
         let _ = params;
         log("Got a workspace/symbol request, but it is not implemented");
         Err(Error::method_not_found())
@@ -1045,7 +1045,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.17.0.
 
-    fn symbol_resolve(&self, params: WorkspaceSymbol) -> Result<WorkspaceSymbol> {
+    fn symbol_resolve(&mut self, params: WorkspaceSymbol) -> Result<WorkspaceSymbol> {
         let _ = params;
         log("Got a workspaceSymbol/resolve request, but it is not implemented");
         Err(Error::method_not_found())
@@ -1056,7 +1056,7 @@ pub trait Handler {
     ///
     /// [`workspace/didChangeConfiguration`]: https://microsoft.github.io/language-server-protocol/specification#workspace_didChangeConfiguration
 
-    fn did_change_configuration(&self, params: DidChangeConfigurationParams) {
+    fn did_change_configuration(&mut self, params: DidChangeConfigurationParams) {
         let _ = params;
         log("Got a workspace/didChangeConfiguration notification, but it is not implemented");
     }
@@ -1075,7 +1075,7 @@ pub trait Handler {
     /// This notification is also sent if the server has registered itself to receive this
     /// notification.
 
-    fn did_change_workspace_folders(&self, params: DidChangeWorkspaceFoldersParams) {
+    fn did_change_workspace_folders(&mut self, params: DidChangeWorkspaceFoldersParams) {
         let _ = params;
         log("Got a workspace/didChangeWorkspaceFolders notification, but it is not implemented");
     }
@@ -1094,7 +1094,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
 
-    fn will_create_files(&self, params: CreateFilesParams) -> Result<Option<WorkspaceEdit>> {
+    fn will_create_files(&mut self, params: CreateFilesParams) -> Result<Option<WorkspaceEdit>> {
         let _ = params;
         log("Got a workspace/willCreateFiles request, but it is not implemented");
         Err(Error::method_not_found())
@@ -1105,7 +1105,7 @@ pub trait Handler {
     ///
     /// [`workspace/didCreateFiles`]: https://microsoft.github.io/language-server-protocol/specification#workspace_didCreateFiles
 
-    fn did_create_files(&self, params: CreateFilesParams) {
+    fn did_create_files(&mut self, params: CreateFilesParams) {
         let _ = params;
         log("Got a workspace/didCreateFiles notification, but it is not implemented");
     }
@@ -1124,7 +1124,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
 
-    fn will_rename_files(&self, params: RenameFilesParams) -> Result<Option<WorkspaceEdit>> {
+    fn will_rename_files(&mut self, params: RenameFilesParams) -> Result<Option<WorkspaceEdit>> {
         let _ = params;
         log("Got a workspace/willRenameFiles request, but it is not implemented");
         Err(Error::method_not_found())
@@ -1135,7 +1135,7 @@ pub trait Handler {
     ///
     /// [`workspace/didRenameFiles`]: https://microsoft.github.io/language-server-protocol/specification#workspace_didRenameFiles
 
-    fn did_rename_files(&self, params: RenameFilesParams) {
+    fn did_rename_files(&mut self, params: RenameFilesParams) {
         let _ = params;
         log("Got a workspace/didRenameFiles notification, but it is not implemented");
     }
@@ -1155,7 +1155,7 @@ pub trait Handler {
     ///
     /// This request was introduced in specification version 3.16.0.
 
-    fn will_delete_files(&self, params: DeleteFilesParams) -> Result<Option<WorkspaceEdit>> {
+    fn will_delete_files(&mut self, params: DeleteFilesParams) -> Result<Option<WorkspaceEdit>> {
         let _ = params;
         log("Got a workspace/willDeleteFiles request, but it is not implemented");
         Err(Error::method_not_found())
@@ -1166,7 +1166,7 @@ pub trait Handler {
     ///
     /// [`workspace/didDeleteFiles`]: https://microsoft.github.io/language-server-protocol/specification#workspace_didDeleteFiles
 
-    fn did_delete_files(&self, params: DeleteFilesParams) {
+    fn did_delete_files(&mut self, params: DeleteFilesParams) {
         let _ = params;
         log("Got a workspace/didDeleteFiles notification, but it is not implemented");
     }
@@ -1180,7 +1180,7 @@ pub trait Handler {
     /// mechanism. This can be done here or in the [`initialized`](Self::initialized) method using
     /// [`Client::register_capability`](crate::Client::register_capability).
 
-    fn did_change_watched_files(&self, params: DidChangeWatchedFilesParams) {
+    fn did_change_watched_files(&mut self, params: DidChangeWatchedFilesParams) {
         let _ = params;
         log("Got a workspace/didChangeWatchedFiles notification, but it is not implemented");
     }
@@ -1193,7 +1193,7 @@ pub trait Handler {
     /// In most cases, the server creates a [`WorkspaceEdit`] structure and applies the changes to
     /// the workspace using `Client::apply_edit()` before returning from this function.
 
-    fn execute_command(&self, params: ExecuteCommandParams) -> Result<Option<Value>> {
+    fn execute_command(&mut self, params: ExecuteCommandParams) -> Result<Option<Value>> {
         let _ = params;
         log("Got a workspace/executeCommand request, but it is not implemented");
         Err(Error::method_not_found())

@@ -1,26 +1,33 @@
-[workspace]
-members = ["crates/*"]
-resolver = "2"
-
-[workspace.package]
-version = "0.3.0"
+[package]
+name = "osmium-libs-foundry-wrapper"
+version = "0.1.0"
 edition = "2021"
-authors = ["Osmium Solidity Contributors"]
+authors = ["Astrodevs-Labs"]
+description = "Foundry abstractions for all extensions"
 license = "GPL-3.0-or-later"
-exclude = ["benches/", "tests/"]
+repository = "https://github.com/astrodevs-labs/osmium"
 
-[workspace.metadata.docs.rs]
-all-features = true
-rustdoc-args = ["--cfg", "docsrs"]
+[lib]
+crate-type = ["cdylib", "rlib"]
 
-[workspace.dependencies]
-# workspace crates
-extension = { version = "0.1.0", path = "crates/extension", default-features = false }
-solidhunter = { version = "0.2.1", path = "crates/solidhunter", default-features = false }
-linter-cli = { version = "0.2.0", path = "crates/linter-cli", default-features = false }
-linter-server = { version = "0.1.0", path = "crates/linter-server", default-features = false }
-foundry-compiler = { version = "0.1.0", path = "crates/foundry-compiler", default-features = false }
-foundry-server = { version = "0.1.0", path = "crates/foundry-server", default-features = false }
+[dependencies]
+glob = "0.3.1"
+clap = "4.4.8"
+thiserror = "1.0"
+foundry-config = { git = "https://github.com/foundry-rs/foundry" }
+forge = { git = "https://github.com/foundry-rs/foundry" }
+foundry-cli = { git = "https://github.com/foundry-rs/foundry" }
+foundry-common = { git = "https://github.com/foundry-rs/foundry" }
+# solc & compilation utilities
+foundry-compilers = { version = "0.1", default-features = false }
+
+# forge dependencies
+eyre = "0.6"
+once_cell = "1"
+semver = "1"
+tracing = "0.1"
+regex = { version = "1", default-features = false }
+yansi = "0.5"
 
 [patch.crates-io]
 ethers = { git = "https://github.com/gakonst/ethers-rs", rev = "0543e1ccbaab70996ab21b5ceeff2fe599728b74" }

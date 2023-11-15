@@ -1,0 +1,10 @@
+{
+  "name": "@osmium-libs/foundry-wrapper",
+  "scripts": {
+    "build": "cargo build --release",
+    "format": "cargo fmt --check --all",
+    "test": "cargo test",
+    "lint": "cargo clippy --all-targets --all-features -- -D warnings",
+    "publish": "cargo package && cargo publish"
+  }
+}

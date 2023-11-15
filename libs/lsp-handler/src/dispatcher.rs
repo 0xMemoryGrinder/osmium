@@ -36,14 +36,14 @@ use wasm_bindgen::prelude::*;
 pub struct Dispatcher {
     handlers: Vec<Box<dyn Handler>>,
     connection: Connection,
-}
+    }
 
 impl Dispatcher {
     pub fn new(connection: Connection) -> Self {
         Dispatcher {
             handlers: Vec::new(),
             connection,
-        }
+                    }
     }
 
     pub fn setup<F>(&mut self, creators: Vec<F>)
@@ -988,11 +988,11 @@ impl Dispatcher {
 }
 
 impl Handler for Dispatcher {
-    fn initialize(&self, params: InitializeParams) -> Result<InitializeResult> {
+    fn initialize(&mut self, params: InitializeParams) -> Result<InitializeResult> {
         let mut res = vec![];
         self.connection
             .log_message(MessageType::INFO, "Dispatcher initializing");
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             res.push(handler.initialize(params.clone()));
         }
         let res: Vec<InitializeResult> = res.iter().filter_map(|i| i.clone().ok()).collect();
@@ -1252,45 +1252,45 @@ impl Handler for Dispatcher {
         Ok(result)
     }
 
-    fn initialized(&self, params: InitializedParams) {
+    fn initialized(&mut self, params: InitializedParams) {
         self.connection
             .log_message(MessageType::INFO, "Dispatcher initialized");
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             handler.initialized(params);
         }
     }
 
-    fn shutdown(&self) -> Result<()> {
-        for handler in &self.handlers {
+    fn shutdown(&mut self) -> Result<()> {
+        for handler in &mut self.handlers {
             let _ = handler.shutdown();
         }
         Ok(())
     }
 
-    fn did_open(&self, params: DidOpenTextDocumentParams) {
-        for handler in &self.handlers {
+    fn did_open(&mut self, params: DidOpenTextDocumentParams) {
+        for handler in &mut self.handlers {
             handler.did_open(params.clone());
         }
     }
 
-    fn did_change(&self, params: DidChangeTextDocumentParams) {
-        for handler in &self.handlers {
+    fn did_change(&mut self, params: DidChangeTextDocumentParams) {
+        for handler in &mut self.handlers {
             handler.did_change(params.clone());
         }
     }
 
-    fn will_save(&self, params: WillSaveTextDocumentParams) {
-        for handler in &self.handlers {
+    fn will_save(&mut self, params: WillSaveTextDocumentParams) {
+        for handler in &mut self.handlers {
             handler.will_save(params.clone());
         }
     }
 
     fn will_save_wait_until(
-        &self,
+        &mut self,
         params: WillSaveTextDocumentParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         let mut text_edit: Vec<TextEdit> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.will_save_wait_until(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1299,23 +1299,23 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn did_save(&self, params: DidSaveTextDocumentParams) {
-        for handler in &self.handlers {
+    fn did_save(&mut self, params: DidSaveTextDocumentParams) {
+        for handler in &mut self.handlers {
             handler.did_save(params.clone());
         }
     }
 
-    fn did_close(&self, params: DidCloseTextDocumentParams) {
-        for handler in &self.handlers {
+    fn did_close(&mut self, params: DidCloseTextDocumentParams) {
+        for handler in &mut self.handlers {
             handler.did_close(params.clone());
         }
     }
 
     fn goto_declaration(
-        &self,
+        &mut self,
         params: GotoDeclarationParams,
     ) -> Result<Option<GotoDeclarationResponse>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.goto_declaration(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1325,10 +1325,10 @@ impl Handler for Dispatcher {
     }
 
     fn goto_definition(
-        &self,
+        &mut self,
         params: GotoDefinitionParams,
     ) -> Result<Option<GotoDefinitionResponse>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.goto_definition(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1338,10 +1338,10 @@ impl Handler for Dispatcher {
     }
 
     fn goto_type_definition(
-        &self,
+        &mut self,
         params: GotoTypeDefinitionParams,
     ) -> Result<Option<GotoTypeDefinitionResponse>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.goto_type_definition(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1351,10 +1351,10 @@ impl Handler for Dispatcher {
     }
 
     fn goto_implementation(
-        &self,
+        &mut self,
         params: GotoImplementationParams,
     ) -> Result<Option<GotoImplementationResponse>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.goto_implementation(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1363,9 +1363,9 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn references(&self, params: ReferenceParams) -> Result<Option<Vec<Location>>> {
+    fn references(&mut self, params: ReferenceParams) -> Result<Option<Vec<Location>>> {
         let mut text_edit: Vec<Location> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.references(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1375,11 +1375,11 @@ impl Handler for Dispatcher {
     }
 
     fn prepare_call_hierarchy(
-        &self,
+        &mut self,
         params: CallHierarchyPrepareParams,
     ) -> Result<Option<Vec<CallHierarchyItem>>> {
         let mut text_edit: Vec<CallHierarchyItem> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.prepare_call_hierarchy(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1389,11 +1389,11 @@ impl Handler for Dispatcher {
     }
 
     fn incoming_calls(
-        &self,
+        &mut self,
         params: CallHierarchyIncomingCallsParams,
     ) -> Result<Option<Vec<CallHierarchyIncomingCall>>> {
         let mut text_edit: Vec<CallHierarchyIncomingCall> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.incoming_calls(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1403,11 +1403,11 @@ impl Handler for Dispatcher {
     }
 
     fn outgoing_calls(
-        &self,
+        &mut self,
         params: CallHierarchyOutgoingCallsParams,
     ) -> Result<Option<Vec<CallHierarchyOutgoingCall>>> {
         let mut text_edit: Vec<CallHierarchyOutgoingCall> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.outgoing_calls(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1417,11 +1417,11 @@ impl Handler for Dispatcher {
     }
 
     fn prepare_type_hierarchy(
-        &self,
+        &mut self,
         params: TypeHierarchyPrepareParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let mut text_edit: Vec<TypeHierarchyItem> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.prepare_type_hierarchy(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1431,11 +1431,11 @@ impl Handler for Dispatcher {
     }
 
     fn supertypes(
-        &self,
+        &mut self,
         params: TypeHierarchySupertypesParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let mut text_edit: Vec<TypeHierarchyItem> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.supertypes(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1445,11 +1445,11 @@ impl Handler for Dispatcher {
     }
 
     fn subtypes(
-        &self,
+        &mut self,
         params: TypeHierarchySubtypesParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         let mut text_edit: Vec<TypeHierarchyItem> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.subtypes(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1459,11 +1459,11 @@ impl Handler for Dispatcher {
     }
 
     fn document_highlight(
-        &self,
+        &mut self,
         params: DocumentHighlightParams,
     ) -> Result<Option<Vec<DocumentHighlight>>> {
         let mut text_edit: Vec<DocumentHighlight> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.document_highlight(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1472,9 +1472,9 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn document_link(&self, params: DocumentLinkParams) -> Result<Option<Vec<DocumentLink>>> {
+    fn document_link(&mut self, params: DocumentLinkParams) -> Result<Option<Vec<DocumentLink>>> {
         let mut text_edit: Vec<DocumentLink> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.document_link(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1483,8 +1483,8 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn document_link_resolve(&self, params: DocumentLink) -> Result<DocumentLink> {
-        for handler in &self.handlers {
+    fn document_link_resolve(&mut self, params: DocumentLink) -> Result<DocumentLink> {
+        for handler in &mut self.handlers {
             let res = handler.document_link_resolve(params.clone());
             if res.is_ok() {
                 return res;
@@ -1493,8 +1493,8 @@ impl Handler for Dispatcher {
         Err(Error::new(ErrorCode::MethodNotFound))
     }
 
-    fn hover(&self, params: HoverParams) -> Result<Option<Hover>> {
-        for handler in &self.handlers {
+    fn hover(&mut self, params: HoverParams) -> Result<Option<Hover>> {
+        for handler in &mut self.handlers {
             let res = handler.hover(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1503,9 +1503,9 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn code_lens(&self, params: CodeLensParams) -> Result<Option<Vec<CodeLens>>> {
+    fn code_lens(&mut self, params: CodeLensParams) -> Result<Option<Vec<CodeLens>>> {
         let mut text_edit: Vec<CodeLens> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.code_lens(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1514,8 +1514,8 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn code_lens_resolve(&self, params: CodeLens) -> Result<CodeLens> {
-        for handler in &self.handlers {
+    fn code_lens_resolve(&mut self, params: CodeLens) -> Result<CodeLens> {
+        for handler in &mut self.handlers {
             let res = handler.code_lens_resolve(params.clone());
             if res.is_ok() {
                 return res;
@@ -1524,9 +1524,9 @@ impl Handler for Dispatcher {
         Err(Error::new(ErrorCode::MethodNotFound))
     }
 
-    fn folding_range(&self, params: FoldingRangeParams) -> Result<Option<Vec<FoldingRange>>> {
+    fn folding_range(&mut self, params: FoldingRangeParams) -> Result<Option<Vec<FoldingRange>>> {
         let mut text_edit: Vec<FoldingRange> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.folding_range(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1535,9 +1535,9 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn selection_range(&self, params: SelectionRangeParams) -> Result<Option<Vec<SelectionRange>>> {
+    fn selection_range(&mut self, params: SelectionRangeParams) -> Result<Option<Vec<SelectionRange>>> {
         let mut text_edit: Vec<SelectionRange> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.selection_range(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1547,10 +1547,10 @@ impl Handler for Dispatcher {
     }
 
     fn document_symbol(
-        &self,
+        &mut self,
         params: DocumentSymbolParams,
     ) -> Result<Option<DocumentSymbolResponse>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.document_symbol(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1560,10 +1560,10 @@ impl Handler for Dispatcher {
     }
 
     fn semantic_tokens_full(
-        &self,
+        &mut self,
         params: SemanticTokensParams,
     ) -> Result<Option<SemanticTokensResult>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.semantic_tokens_full(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1573,10 +1573,10 @@ impl Handler for Dispatcher {
     }
 
     fn semantic_tokens_full_delta(
-        &self,
+        &mut self,
         params: SemanticTokensDeltaParams,
     ) -> Result<Option<SemanticTokensFullDeltaResult>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.semantic_tokens_full_delta(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1586,10 +1586,10 @@ impl Handler for Dispatcher {
     }
 
     fn semantic_tokens_range(
-        &self,
+        &mut self,
         params: SemanticTokensRangeParams,
     ) -> Result<Option<SemanticTokensRangeResult>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.semantic_tokens_range(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1598,9 +1598,9 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn inline_value(&self, params: InlineValueParams) -> Result<Option<Vec<InlineValue>>> {
+    fn inline_value(&mut self, params: InlineValueParams) -> Result<Option<Vec<InlineValue>>> {
         let mut text_edit: Vec<InlineValue> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.inline_value(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1609,9 +1609,9 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn inlay_hint(&self, params: InlayHintParams) -> Result<Option<Vec<InlayHint>>> {
+    fn inlay_hint(&mut self, params: InlayHintParams) -> Result<Option<Vec<InlayHint>>> {
         let mut text_edit: Vec<InlayHint> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.inlay_hint(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1620,8 +1620,8 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn inlay_hint_resolve(&self, params: InlayHint) -> Result<InlayHint> {
-        for handler in &self.handlers {
+    fn inlay_hint_resolve(&mut self, params: InlayHint) -> Result<InlayHint> {
+        for handler in &mut self.handlers {
             let res = handler.inlay_hint_resolve(params.clone());
             if res.is_ok() {
                 return res;
@@ -1630,9 +1630,9 @@ impl Handler for Dispatcher {
         Err(Error::new(ErrorCode::MethodNotFound))
     }
 
-    fn moniker(&self, params: MonikerParams) -> Result<Option<Vec<Moniker>>> {
+    fn moniker(&mut self, params: MonikerParams) -> Result<Option<Vec<Moniker>>> {
         let mut text_edit: Vec<Moniker> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.moniker(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1641,8 +1641,8 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn completion(&self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
-        for handler in &self.handlers {
+    fn completion(&mut self, params: CompletionParams) -> Result<Option<CompletionResponse>> {
+        for handler in &mut self.handlers {
             let res = handler.completion(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1651,8 +1651,8 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn completion_resolve(&self, params: CompletionItem) -> Result<CompletionItem> {
-        for handler in &self.handlers {
+    fn completion_resolve(&mut self, params: CompletionItem) -> Result<CompletionItem> {
+        for handler in &mut self.handlers {
             let res = handler.completion_resolve(params.clone());
             if res.is_ok() {
                 return res;
@@ -1662,10 +1662,10 @@ impl Handler for Dispatcher {
     }
 
     fn diagnostic(
-        &self,
+        &mut self,
         params: DocumentDiagnosticParams,
     ) -> Result<DocumentDiagnosticReportResult> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.diagnostic(params.clone());
             if res.is_ok() {
                 return res;
@@ -1675,10 +1675,10 @@ impl Handler for Dispatcher {
     }
 
     fn workspace_diagnostic(
-        &self,
+        &mut self,
         params: WorkspaceDiagnosticParams,
     ) -> Result<WorkspaceDiagnosticReportResult> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.workspace_diagnostic(params.clone());
             if res.is_ok() {
                 return res;
@@ -1687,8 +1687,8 @@ impl Handler for Dispatcher {
         Err(Error::new(ErrorCode::MethodNotFound))
     }
 
-    fn signature_help(&self, params: SignatureHelpParams) -> Result<Option<SignatureHelp>> {
-        for handler in &self.handlers {
+    fn signature_help(&mut self, params: SignatureHelpParams) -> Result<Option<SignatureHelp>> {
+        for handler in &mut self.handlers {
             let res = handler.signature_help(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1697,8 +1697,8 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn code_action(&self, params: CodeActionParams) -> Result<Option<CodeActionResponse>> {
-        for handler in &self.handlers {
+    fn code_action(&mut self, params: CodeActionParams) -> Result<Option<CodeActionResponse>> {
+        for handler in &mut self.handlers {
             let res = handler.code_action(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1707,8 +1707,8 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn code_action_resolve(&self, params: CodeAction) -> Result<CodeAction> {
-        for handler in &self.handlers {
+    fn code_action_resolve(&mut self, params: CodeAction) -> Result<CodeAction> {
+        for handler in &mut self.handlers {
             let res = handler.code_action_resolve(params.clone());
             if res.is_ok() {
                 return res;
@@ -1717,9 +1717,9 @@ impl Handler for Dispatcher {
         Err(Error::new(ErrorCode::MethodNotFound))
     }
 
-    fn document_color(&self, params: DocumentColorParams) -> Result<Vec<ColorInformation>> {
+    fn document_color(&mut self, params: DocumentColorParams) -> Result<Vec<ColorInformation>> {
         let mut text_edit: Vec<ColorInformation> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.document_color(params.clone());
             if let Ok(val) = res {
                 text_edit.extend(val);
@@ -1729,11 +1729,11 @@ impl Handler for Dispatcher {
     }
 
     fn color_presentation(
-        &self,
+        &mut self,
         params: ColorPresentationParams,
     ) -> Result<Vec<ColorPresentation>> {
         let mut text_edit: Vec<ColorPresentation> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.color_presentation(params.clone());
             if let Ok(val) = res {
                 text_edit.extend(val);
@@ -1742,9 +1742,9 @@ impl Handler for Dispatcher {
         Ok(text_edit)
     }
 
-    fn formatting(&self, params: DocumentFormattingParams) -> Result<Option<Vec<TextEdit>>> {
+    fn formatting(&mut self, params: DocumentFormattingParams) -> Result<Option<Vec<TextEdit>>> {
         let mut text_edit: Vec<TextEdit> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.formatting(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1754,11 +1754,11 @@ impl Handler for Dispatcher {
     }
 
     fn range_formatting(
-        &self,
+        &mut self,
         params: DocumentRangeFormattingParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         let mut text_edit: Vec<TextEdit> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.range_formatting(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1768,11 +1768,11 @@ impl Handler for Dispatcher {
     }
 
     fn on_type_formatting(
-        &self,
+        &mut self,
         params: DocumentOnTypeFormattingParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         let mut text_edit: Vec<TextEdit> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.on_type_formatting(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1781,8 +1781,8 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn rename(&self, params: RenameParams) -> Result<Option<WorkspaceEdit>> {
-        for handler in &self.handlers {
+    fn rename(&mut self, params: RenameParams) -> Result<Option<WorkspaceEdit>> {
+        for handler in &mut self.handlers {
             let res = handler.rename(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1792,10 +1792,10 @@ impl Handler for Dispatcher {
     }
 
     fn prepare_rename(
-        &self,
+        &mut self,
         params: TextDocumentPositionParams,
     ) -> Result<Option<PrepareRenameResponse>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.prepare_rename(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1805,10 +1805,10 @@ impl Handler for Dispatcher {
     }
 
     fn linked_editing_range(
-        &self,
+        &mut self,
         params: LinkedEditingRangeParams,
     ) -> Result<Option<LinkedEditingRanges>> {
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.linked_editing_range(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1817,9 +1817,9 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn symbol(&self, params: WorkspaceSymbolParams) -> Result<Option<Vec<SymbolInformation>>> {
+    fn symbol(&mut self, params: WorkspaceSymbolParams) -> Result<Option<Vec<SymbolInformation>>> {
         let mut text_edit: Vec<SymbolInformation> = vec![];
-        for handler in &self.handlers {
+        for handler in &mut self.handlers {
             let res = handler.symbol(params.clone());
             if let Ok(Some(val)) = res {
                 text_edit.extend(val);
@@ -1828,8 +1828,8 @@ impl Handler for Dispatcher {
         Ok(Some(text_edit))
     }
 
-    fn symbol_resolve(&self, params: WorkspaceSymbol) -> Result<WorkspaceSymbol> {
-        for handler in &self.handlers {
+    fn symbol_resolve(&mut self, params: WorkspaceSymbol) -> Result<WorkspaceSymbol> {
+        for handler in &mut self.handlers {
             let res = handler.symbol_resolve(params.clone());
             if res.is_ok() {
                 return res;
@@ -1838,20 +1838,20 @@ impl Handler for Dispatcher {
         Err(Error::new(ErrorCode::MethodNotFound))
     }
 
-    fn did_change_configuration(&self, params: DidChangeConfigurationParams) {
-        for handler in &self.handlers {
+    fn did_change_configuration(&mut self, params: DidChangeConfigurationParams) {
+        for handler in &mut self.handlers {
             handler.did_change_configuration(params.clone());
         }
     }
 
-    fn did_change_workspace_folders(&self, params: DidChangeWorkspaceFoldersParams) {
-        for handler in &self.handlers {
+    fn did_change_workspace_folders(&mut self, params: DidChangeWorkspaceFoldersParams) {
+        for handler in &mut self.handlers {
             handler.did_change_workspace_folders(params.clone());
         }
     }
 
-    fn will_create_files(&self, params: CreateFilesParams) -> Result<Option<WorkspaceEdit>> {
-        for handler in &self.handlers {
+    fn will_create_files(&mut self, params: CreateFilesParams) -> Result<Option<WorkspaceEdit>> {
+        for handler in &mut self.handlers {
             let res = handler.will_create_files(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1860,14 +1860,14 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn did_create_files(&self, params: CreateFilesParams) {
-        for handler in &self.handlers {
+    fn did_create_files(&mut self, params: CreateFilesParams) {
+        for handler in &mut self.handlers {
             handler.did_create_files(params.clone());
         }
     }
 
-    fn will_rename_files(&self, params: RenameFilesParams) -> Result<Option<WorkspaceEdit>> {
-        for handler in &self.handlers {
+    fn will_rename_files(&mut self, params: RenameFilesParams) -> Result<Option<WorkspaceEdit>> {
+        for handler in &mut self.handlers {
             let res = handler.will_rename_files(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1876,14 +1876,14 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn did_rename_files(&self, params: RenameFilesParams) {
-        for handler in &self.handlers {
+    fn did_rename_files(&mut self, params: RenameFilesParams) {
+        for handler in &mut self.handlers {
             handler.did_rename_files(params.clone());
         }
     }
 
-    fn will_delete_files(&self, params: DeleteFilesParams) -> Result<Option<WorkspaceEdit>> {
-        for handler in &self.handlers {
+    fn will_delete_files(&mut self, params: DeleteFilesParams) -> Result<Option<WorkspaceEdit>> {
+        for handler in &mut self.handlers {
             let res = handler.will_delete_files(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
@@ -1892,20 +1892,20 @@ impl Handler for Dispatcher {
         Ok(None)
     }
 
-    fn did_delete_files(&self, params: DeleteFilesParams) {
-        for handler in &self.handlers {
+    fn did_delete_files(&mut self, params: DeleteFilesParams) {
+        for handler in &mut self.handlers {
             handler.did_delete_files(params.clone());
         }
     }
 
-    fn did_change_watched_files(&self, params: DidChangeWatchedFilesParams) {
-        for handler in &self.handlers {
+    fn did_change_watched_files(&mut self, params: DidChangeWatchedFilesParams) {
+        for handler in &mut self.handlers {
             handler.did_change_watched_files(params.clone());
         }
     }
 
-    fn execute_command(&self, params: ExecuteCommandParams) -> Result<Option<Value>> {
-        for handler in &self.handlers {
+    fn execute_command(&mut self, params: ExecuteCommandParams) -> Result<Option<Value>> {
+        for handler in &mut self.handlers {
             let res = handler.execute_command(params.clone());
             if let Ok(Some(_)) = res {
                 return res;
