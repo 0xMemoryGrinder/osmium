@@ -123,7 +123,7 @@
   {
     "id": "custom-errors",
     "description": "Enforces the use of Custom Errors over Require and Revert statements",
-    "category": "best-practises",
+    "category": "best-practices",
     "example_config": "",
     "source_link": "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/custom_errors.rs",
     "test_link": "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/CustomErrors",

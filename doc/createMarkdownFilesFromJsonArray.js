@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs';
-
-let filename = '';
+import { dirname } from 'path';
 
 async function readFileContent(filePath) {
   try {
@@ -11,49 +10,55 @@ async function readFileContent(filePath) {
   }
 }
 
-async function saveToFile(path, content) {
+async function saveToFile(filepath, content) {
   try {
-    await fs.writeFile(path, content, 'utf8');
+    const directory = dirname(filepath);
+    await fs.mkdir(directory, { recursive: true });
+    await fs.writeFile(filepath, content, 'utf8');
   } catch (err) {
     console.error('Error creating the file:', err);
   }
 }
 
-function id(value) {
-  filename = value;
-  return "";
-}
+const parseJson = (rule) => {
+  let content = "";
 
-function code(value) {
-  const blockCodeDelimiter = "```";
-  const langage = 'solidity';
-  return `${blockCodeDelimiter}${langage}\n${value}\n\n${blockCodeDelimiter}\n`;
-}
-
-const balises = ["id", "code"];
-const functions = [id, code];
-
-function parseJSON(obj, depth) {
-  let content = '';
-  for (const prop in obj) {
-    const value = obj[prop];
-
-    if (typeof value === 'object') {
-      content += `${'#'.repeat(depth + 1)} ${prop}\n\n`;
-      content += parseJSON(value, depth + 1);
-      continue;
-    }
-    let isText = true;
-    for (const elem in balises) {
-      if (prop === balises[elem]) {
-        isText = false;
-        content += functions[elem](value);
-      }
-    }
-    if (isText) {
-      content += `${prop}: ${value}\n\n`;
-    }
+  const categoryFormated = rule.category.replace("-", "_");
+  content += `![](https://img.shields.io/badge/${categoryFormated}-green)\t`;
+  content += `![](https://img.shields.io/badge/Default%20Severity-${rule.severity}-yellow)\n\n`;
+  content += "## Description\n";
+  content += `${rule.description}\n\n`;
+  content += "## Options\n";
+  content += "description | default\n";
+  content += "------------ | -------------\n";
+  for (const example of rule.options) {
+    content += `${example.description} | ${example.default}\n`;
   }
+  content += "## Example Config\n";
+  if (rule.example_config !== "") {
+    content += "```json\n";
+    content += `${rule.example_config}\n`;
+    content += "```\n\n";
+  }
+  content += "## Examples\n";
+  content += "### Good\n";
+  for (const example of rule.examples.good) {
+    content += `### ${example.description}\n`;
+    content += "```solidity\n";
+    content += `${example.code}\n`;
+    content += "```\n\n";
+  }
+  content += "### Bad\n";
+  for (const example of rule.examples.bad) {
+    content += `### ${example.description}\n`;
+    content += "```solidity\n";
+    content += `${example.code}\n`;
+    content += "```\n\n";
+  }
+
+  content += "## References\n";
+  content += `* [Rule source](${rule.source_link})\n`;
+  content += `* [Test](${rule.test_link})\n`;
   return content;
 }
 
@@ -63,10 +68,10 @@ async function createMarkdownFilesFromJsonArray(path) {
   let depth = 1;
   for (const key in jsonContent) {
     let content = '';
-    const value = jsonContent[key];
-    const body = parseJSON(value, depth);
-    content += `# ${filename}\n\n` + body;
-    saveToFile(`./${filename}.md`, content);
+    const rule = jsonContent[key];
+    const body = parseJson(rule, depth);
+    content += `# ${rule.id}\n\n` + body;
+    saveToFile(`./${rule.category}/${rule.id}.md`, content);
   }
 }
 
