@@ -24,3 +24,9 @@ pub fn parse_rules(path: &str) -> Result<Rules, SolidHunterError> {
 
     Ok(parsed)
 }
+
+pub fn parse_rules_content(content: &str) -> Result<Rules, SolidHunterError> {
+    let parsed: Rules = serde_json::from_str(&content)?;
+
+    Ok(parsed)
+}

@@ -5,7 +5,7 @@ use osmium_libs_lsp_handler::{
         Diagnostic, DiagnosticSeverity, DidChangeTextDocumentParams, DidChangeWatchedFilesParams,
         DidOpenTextDocumentParams, InitializeParams, InitializeResult, InitializedParams,
         MessageType, Position, Range, ServerCapabilities, TextDocumentSyncCapability,
-        TextDocumentSyncKind, Url,
+        TextDocumentSyncKind, Url, FileChangeType,
     },
     Connection, Handler, Result,
 };
@@ -13,7 +13,6 @@ use solidhunter_lib::{linter::SolidLinter, types::LintDiag};
 
 struct Backend {
     connection: Connection,
-    config_file_path: String,
     linter: RefCell<Option<SolidLinter>>,
 }
 
@@ -32,29 +31,12 @@ impl Handler for Backend {
     }
 
     fn initialized(&self, _: InitializedParams) {
-        eprintln!(
-            "Initializing server with config file: {:?}",
-            self.config_file_path
-        );
+        eprintln!("Initializing server");
         self.connection
             .log_message(MessageType::INFO, "Server initialized!");
 
-        if std::path::Path::new(&self.config_file_path).is_file() {
-            let mut linter = SolidLinter::new();
-            let res = linter.initialize_rules(&self.config_file_path);
-            if let Err(e) = res {
-                eprintln!("Error initializing rules: {:?}", e);
-                self.linter
-                    .borrow_mut()
-                    .replace(SolidLinter::new_fileless());
-                return;
-            }
-            self.linter.replace(Some(linter));
-        } else {
-            self.linter
-                .borrow_mut()
-                .replace(SolidLinter::new_fileless());
-        }
+        let linter = SolidLinter::new_fileless();
+        self.linter.replace(Some(linter));
 
         self.connection
             .log_message(MessageType::INFO, "Linter initialized!");
@@ -130,17 +112,18 @@ impl Handler for Backend {
         }
     }
 
-    fn did_change_watched_files(&self, _: DidChangeWatchedFilesParams) {
+    fn did_change_watched_files(&self, params: DidChangeWatchedFilesParams) {
         self.connection
             .log_message(MessageType::INFO, "configuration file changed!");
 
-        if std::path::Path::new(&self.config_file_path).is_file() {
-            let mut linter = SolidLinter::new();
-            let res = linter.initialize_rules(&self.config_file_path);
-            if res.is_ok() {
-                self.linter.replace(Some(linter));
-            }
+        if params.changes[0].typ == FileChangeType::DELETED {
+            return;
         }
+        // let mut linter = SolidLinter::new();
+        // let res = linter.initialize_rules_content(&params.changes[0].text);
+        // if res.is_ok() {
+        //     self.linter.replace(Some(linter));
+        // }
     }
 }
 
@@ -175,7 +158,6 @@ fn diagnostic_from_lintdiag(diag: LintDiag) -> Diagnostic {
 pub fn create_linter(connection: Connection) -> Box<dyn Handler> {
     Box::new(Backend {
         connection,
-        config_file_path: ".solidhunter.json".to_string(),
         linter: RefCell::new(None),
     })
 }

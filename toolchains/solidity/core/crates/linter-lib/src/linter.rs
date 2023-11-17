@@ -2,6 +2,7 @@ use crate::errors::SolidHunterError;
 use crate::rules::create_default_rules;
 use crate::rules::factory::RuleFactory;
 use crate::rules::rule_impl::parse_rules;
+use crate::rules::rule_impl::parse_rules_content;
 use crate::rules::types::*;
 use crate::types::*;
 use std::fs;
@@ -54,6 +55,14 @@ impl SolidLinter {
 
     pub fn initialize_rules(&mut self, rules_config: &str) -> Result<(), SolidHunterError> {
         let res = parse_rules(rules_config)?;
+        for rule in res.rules {
+            self.rules.push(self.rule_factory.create_rule(rule));
+        }
+        Ok(())
+    }
+
+    pub fn initialize_rules_content(&mut self, rules_config: &str) -> Result<(), SolidHunterError> {
+        let res = parse_rules_content(rules_config)?;
         for rule in res.rules {
             self.rules.push(self.rule_factory.create_rule(rule));
         }

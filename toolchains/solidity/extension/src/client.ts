@@ -56,6 +56,10 @@ export async function activate(context: ExtensionContext) {
 	const folders = workspace.workspaceFolders;
 	if (folders) {
 		const folder = folders[0];
+		const configFiles = await workspace.findFiles('**/.solidhunter.json', `${folder.uri.fsPath}/**`);
+		if (configFiles.length > 0) {
+			workspace.openTextDocument(configFiles[0]);
+		}
 		const files = await workspace.findFiles('**/*.sol', `${folder.uri.fsPath}/**`);
 		files.forEach(file => {
 			workspace.openTextDocument(file);
