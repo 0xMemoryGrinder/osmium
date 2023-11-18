@@ -133,7 +133,7 @@ impl RuleType for ReasonString {
             id: RULE_ID.to_string(),
             description: "Require or revert statement must have a reason string and check that each reason string is at most N characters long.".to_string(),
             category: "best-practices".to_string(),
-            example_config: "".to_string(),
+            example_config: " {\"id\": \"reason-string\", \"severity\": \"WARNING\", \"data\": 20}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/reason_string.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/ReasonString".to_string(),
             options: vec![Options{description: "A JSON object with a single property \"maxLength\" specifying the max number of characters per reason string.".to_string(),

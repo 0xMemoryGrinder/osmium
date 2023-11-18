@@ -521,7 +521,7 @@ impl RuleType for Ordering {
             id: RULE_ID.to_string(),
             description: "Check order of elements in file and inside each contract, according to the style guide.".to_string(),
             category: "order".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"ordering\", \"severity\": \"WARNING\"}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/order/ordering.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/Ordering".to_string(),
             options: vec![],

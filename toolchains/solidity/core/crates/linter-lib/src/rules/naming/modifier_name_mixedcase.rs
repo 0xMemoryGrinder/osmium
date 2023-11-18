@@ -86,7 +86,7 @@ impl RuleType for ModifierNameMixedcase {
             id: RULE_ID.to_string(),
             description: "Modifier name must be in mixedCase.".to_string(),
             category: "naming".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"modifier-name-mixedcase\", \"severity\": \"WARNING\", \"data\": []}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/naming/modifier_name_mixedcase.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/ModifierNameMixedcase".to_string(),
             options: vec![],

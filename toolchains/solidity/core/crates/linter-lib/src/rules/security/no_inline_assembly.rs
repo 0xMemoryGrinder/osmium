@@ -58,7 +58,7 @@ impl RuleType for NoInlineAssembly {
             description: "Avoid to use inline assembly. It is acceptable only in rare cases."
                 .to_string(),
             category: "security".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"no-inline-assembly\", \"severity\": \"WARNING\"}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/security/no_inline_assembly.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/NoInlineAssembly".to_string(),
             options: vec![],

@@ -59,7 +59,7 @@ impl RuleType for OneContractPerFile {
             id: RULE_ID.to_string(),
             description: "Imported object name is not being used by the contract.".to_string(),
             category: "best-practices".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"one-contract-per-file\", \"severity\": \"WARNING\"}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/one_contract_per_file.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/OneContractPerFile".to_string(),
             options: vec![],

@@ -106,7 +106,7 @@ impl RuleType for FoundryTestFunctions {
             description: "Enforce naming convention on functions for Foundry test cases"
                 .to_string(),
             category: "naming".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"foundry-test-functions\", \"severity\": \"WARNING\", \"data\": [\"setUp\"]}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/naming/foundry_test_functions.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/FoundryTestFunctions".to_string(),
             options: vec![Options {

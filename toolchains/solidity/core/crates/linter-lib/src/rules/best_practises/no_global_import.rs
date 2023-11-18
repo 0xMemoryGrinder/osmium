@@ -40,7 +40,7 @@ impl RuleType for NoGlobalImport {
             description: "Import statement includes an entire file instead of selected symbols."
                 .to_string(),
             category: "best-practices".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"no-global-import\", \"severity\": \"WARNING\"}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/best_practices/no_global_import.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/NoGlobalImport".to_string(),
             options: vec![],

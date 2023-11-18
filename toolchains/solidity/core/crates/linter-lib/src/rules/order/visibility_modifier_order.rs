@@ -42,7 +42,7 @@ impl RuleType for VisibilityModiferOrder {
             id: RULE_ID.to_string(),
             description: "Visibility modifier must be first in list of modifiers.".to_string(),
             category: "order".to_string(),
-            example_config: "".to_string(),
+            example_config: "{\"id\": \"visibility-modifier-order\", \"severity\": \"WARNING\"}".to_string(),
             source_link: "https://github.com/astrodevs-labs/osmium/blob/dev/toolchains/solidity/core/crates/linter-lib/src/rules/order/visibility_modifier_order.rs".to_string(),
             test_link: "https://github.com/astrodevs-labs/osmium/tree/dev/toolchains/solidity/core/crates/linter-lib/testdata/VisibilityModifierOrder".to_string(),
             options: vec![],
