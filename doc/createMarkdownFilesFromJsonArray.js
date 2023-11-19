@@ -50,7 +50,7 @@ const parseJson = (rule) => {
   content += "### Good\n";
   if (rule.examples.good.length) {
     for (const example of rule.examples.good) {
-      content += `### ${example.description}\n`;
+      content += `${example.description}\n`;
       content += "```solidity\n";
       content += `${example.code}\n`;
       content += "```\n\n";
@@ -61,7 +61,7 @@ const parseJson = (rule) => {
   content += "### Bad\n";
   if (rule.examples.bad.length) {
     for (const example of rule.examples.bad) {
-      content += `### ${example.description}\n`;
+      content += `${example.description}\n`;
       content += "```solidity\n";
       content += `${example.code}\n`;
       content += "```\n\n";
