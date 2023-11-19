@@ -29,33 +29,46 @@ const parseJson = (rule) => {
   content += "## Description\n";
   content += `${rule.description}\n\n`;
   content += "## Options\n";
-  content += "description | default\n";
-  content += "------------ | -------------\n";
-  for (const example of rule.options) {
-    content += `${example.description} | ${example.default}\n`;
+  if (rule.options.length) {
+    content += "description | default\n";
+    content += "------------ | -------------\n";
+    for (const option of rule.options) {
+      content += `${option.description} | ${option.default}\n`;
+    }
+  } else {
+    content += "This rule does not require any options.\n";
   }
+
   content += "## Example Config\n";
-  if (rule.example_config !== "") {
+  if (rule.example_config) {
+    const exampleConfig = JSON.stringify(JSON.parse(rule.example_config),null,2);
     content += "```json\n";
-    content += `${rule.example_config}\n`;
+    content += `${exampleConfig}\n`;
     content += "```\n\n";
   }
   content += "## Examples\n";
   content += "### Good\n";
-  for (const example of rule.examples.good) {
-    content += `### ${example.description}\n`;
-    content += "```solidity\n";
-    content += `${example.code}\n`;
-    content += "```\n\n";
+  if (rule.examples.good.length) {
+    for (const example of rule.examples.good) {
+      content += `### ${example.description}\n`;
+      content += "```solidity\n";
+      content += `${example.code}\n`;
+      content += "```\n\n";
+    }
+  } else {
+    content += "This rule does not have good examples.\n";
   }
   content += "### Bad\n";
-  for (const example of rule.examples.bad) {
-    content += `### ${example.description}\n`;
-    content += "```solidity\n";
-    content += `${example.code}\n`;
-    content += "```\n\n";
+  if (rule.examples.bad.length) {
+    for (const example of rule.examples.bad) {
+      content += `### ${example.description}\n`;
+      content += "```solidity\n";
+      content += `${example.code}\n`;
+      content += "```\n\n";
+    }
+  } else {
+    content += "This rule does not have bad examples.\n";
   }
-
   content += "## References\n";
   content += `* [Rule source](${rule.source_link})\n`;
   content += `* [Test](${rule.test_link})\n`;
