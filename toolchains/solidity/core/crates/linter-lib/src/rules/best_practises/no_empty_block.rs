@@ -38,6 +38,7 @@ impl RuleType for NoEmptyBlock {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Code block has zero statements inside. Exceptions apply.".to_string(),
             category: "best-practices".to_string(),
             example_config: "{\"id\": \"no-empty-block\", \"severity\": \"WARNING\"}".to_string(),

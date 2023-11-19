@@ -80,6 +80,7 @@ impl RuleType for AvoidTxOrigin {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Avoid to use tx.origin.".to_string(),
             category: "security".to_string(),
             example_config: " {\"id\": \"avoid-tx-origin\", \"severity\": \"WARNING\"}".to_string(),

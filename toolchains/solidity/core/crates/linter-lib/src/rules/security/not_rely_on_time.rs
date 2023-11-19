@@ -81,6 +81,7 @@ impl RuleType for NotRelyOnTime {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Avoid making time-based decisions in your business logic.".to_string(),
             category: "security".to_string(),
             example_config: "{\"id\": \"not-rely-on-time\", \"severity\": \"WARNING\"}".to_string(),

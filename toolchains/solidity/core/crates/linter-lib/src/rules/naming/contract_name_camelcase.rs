@@ -60,6 +60,7 @@ impl RuleType for ContractNameCamelCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Contract name must be in CamelCase.".to_string(),
             category: "naming".to_string(),
             example_config: "{\"id\": \"contract-name-camelcase\", \"severity\": \"WARNING\"}".to_string(),

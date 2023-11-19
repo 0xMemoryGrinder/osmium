@@ -25,6 +25,7 @@ pub struct Examples {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RuleDocumentation {
     pub id: String,
+    pub severity: Severity,
     pub description: String,
     pub category: String,
     pub example_config: String,

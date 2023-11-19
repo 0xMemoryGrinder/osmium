@@ -37,6 +37,7 @@ impl RuleType for NoGlobalImport {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Import statement includes an entire file instead of selected symbols."
                 .to_string(),
             category: "best-practices".to_string(),

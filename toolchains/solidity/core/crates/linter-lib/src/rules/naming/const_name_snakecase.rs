@@ -71,6 +71,7 @@ impl RuleType for ConstNameSnakeCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Constant name must be in capitalized SNAKE_CASE. (Does not check IMMUTABLES, use immutable-vars-naming)".to_string(),
             category: "naming".to_string(),
             example_config: " {\"id\": \"const-name-snakecase\", \"severity\": \"WARNING\"}".to_string(),

@@ -103,6 +103,7 @@ impl RuleType for FoundryTestFunctions {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Enforce naming convention on functions for Foundry test cases"
                 .to_string(),
             category: "naming".to_string(),

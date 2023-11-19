@@ -40,6 +40,7 @@ impl RuleType for VisibilityModiferOrder {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Visibility modifier must be first in list of modifiers.".to_string(),
             category: "order".to_string(),
             example_config: "{\"id\": \"visibility-modifier-order\", \"severity\": \"WARNING\"}".to_string(),

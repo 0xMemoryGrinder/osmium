@@ -118,6 +118,7 @@ impl RuleType for ExplicitTypes {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description:
                 "Forbid or enforce explicit types (like uint256) that have an alias (like uint)."
                     .to_string(),

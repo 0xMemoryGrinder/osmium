@@ -40,6 +40,7 @@ impl RuleType for PayableFallback {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "When fallback is not payable you will not be able to receive ethers."
                 .to_string(),
             category: "best-practices".to_string(),

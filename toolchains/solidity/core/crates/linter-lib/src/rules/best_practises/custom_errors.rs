@@ -71,6 +71,7 @@ impl RuleType for CustomErrors {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Enforces the use of Custom Errors over Require and Revert statements"
                 .to_string(),
             category: "best-practises".to_string(),

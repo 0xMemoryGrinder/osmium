@@ -81,6 +81,7 @@ impl RuleType for EventNameCamelCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Event name must be in CamelCase.".to_string(),
             category: "naming".to_string(),
             example_config: "{\"id\": \"event-name-camelcase\", \"severity\": \"WARNING\"}".to_string(),

@@ -519,6 +519,7 @@ impl RuleType for Ordering {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Check order of elements in file and inside each contract, according to the style guide.".to_string(),
             category: "order".to_string(),
             example_config: "{\"id\": \"ordering\", \"severity\": \"WARNING\"}".to_string(),

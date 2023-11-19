@@ -154,6 +154,7 @@ impl RuleType for PrivateVarsLeadingUnderscore {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Non-external functions and state variables should start with a single underscore. Others, shouldn't".to_string(),
             category: "naming".to_string(),
             example_config: " {\"id\": \"private-vars-leading-underscore\", \"severity\": \"WARNING\", \"data\": {\"strict\": true}}".to_string(),

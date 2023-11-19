@@ -57,6 +57,7 @@ impl RuleType for OneContractPerFile {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Imported object name is not being used by the contract.".to_string(),
             category: "best-practices".to_string(),
             example_config: "{\"id\": \"one-contract-per-file\", \"severity\": \"WARNING\"}".to_string(),

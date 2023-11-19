@@ -67,6 +67,7 @@ impl RuleType for FuncParamNameMixedCase {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Function param name must be in mixedCase.".to_string(),
             category: "naming".to_string(),
             example_config: "{\"id\": \"func-param-name-mixedcase\", \"severity\": \"WARNING\"}".to_string(),

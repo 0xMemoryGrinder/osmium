@@ -53,6 +53,7 @@ impl RuleType for FunctionMaxLines {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description:
                 "Function body contains \"count\" lines but allowed no more than maxlines."
                     .to_string(),

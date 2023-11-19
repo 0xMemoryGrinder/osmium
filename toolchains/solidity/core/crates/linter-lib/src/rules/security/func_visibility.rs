@@ -7,6 +7,7 @@ use osmium_libs_solidity_ast_extractor::Spanned;
 pub const RULE_ID: &str = "func-visibility";
 
 // specific
+const DEFAULT_SEVERITY: Severity = Severity::WARNING;
 const DEFAULT_MESSAGE: &str =
     "Explicitly mark visibility in function (public, private, internal, external)";
 pub const DEFAULT_IGNORE_CONSTRUCTORS: bool = true;
@@ -80,6 +81,7 @@ impl RuleType for FuncVisibility {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Explicitly mark visibility in function.".to_string(),
             category: "security".to_string(),
             example_config: "{\"id\": \"func-visibility\", \"severity\": \"WARNING\", \"data\": {\"ignoreConstructors\": false}}".to_string(),
@@ -128,7 +130,7 @@ impl FuncVisibility {
     pub(crate) fn create_default() -> RuleEntry {
         RuleEntry {
             id: RULE_ID.to_string(),
-            severity: Severity::WARNING,
+            severity: DEFAULT_SEVERITY,
             data: Some(serde_json::json!({
                 "ignoreConstructors": DEFAULT_IGNORE_CONSTRUCTORS,
             })),

@@ -58,6 +58,7 @@ impl RuleType for MaxLineLength {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Line length must be no more than maxlen.".to_string(),
             category: "best-practices".to_string(),
             example_config: "{\"id\": \"max-line-length\", \"severity\": \"WARNING\", \"data\": 80}".to_string(),

@@ -72,6 +72,7 @@ impl RuleType for MaxStatesCount {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Contract has \"some count\" states declarations but allowed no more than maxstates.".to_string(),
             category: "best-practices".to_string(),
             example_config: " {\"id\": \"max-states-count\", \"severity\": \"WARNING\", \"data\": [15]}".to_string(),

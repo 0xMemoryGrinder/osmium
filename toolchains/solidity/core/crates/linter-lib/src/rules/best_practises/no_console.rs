@@ -95,6 +95,7 @@ impl RuleType for NoConsole {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "No console.log/logInt/logBytesX/logString/etc & No hardhat and forge-std console.sol import statements.".to_string(),
             category: "best-practices".to_string(),
             example_config: "{\"id\": \"no-console\", \"severity\": \"WARNING\"}".to_string(),

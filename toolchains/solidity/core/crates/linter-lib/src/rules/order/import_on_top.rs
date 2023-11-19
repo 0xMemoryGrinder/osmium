@@ -73,6 +73,7 @@ impl RuleType for ImportOnTop {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Import statements must be on top.".to_string(),
             category: "order".to_string(),
             example_config: "{\"id\": \"import-on-top\", \"severity\": \"WARNING\"}".to_string(),

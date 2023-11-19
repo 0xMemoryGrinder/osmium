@@ -131,6 +131,7 @@ impl RuleType for ReasonString {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Require or revert statement must have a reason string and check that each reason string is at most N characters long.".to_string(),
             category: "best-practices".to_string(),
             example_config: " {\"id\": \"reason-string\", \"severity\": \"WARNING\", \"data\": 20}".to_string(),

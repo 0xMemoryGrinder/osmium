@@ -96,6 +96,7 @@ impl RuleType for NamedParametersMapping {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Solidity v0.8.18 introduced named parameters on the mappings definition.".to_string(),
             category: "naming".to_string(),
             example_config: "{\"id\": \"named-parameters-mapping\", \"severity\": \"WARNING\"}".to_string(),

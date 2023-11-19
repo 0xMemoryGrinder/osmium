@@ -58,6 +58,7 @@ impl RuleType for StateVisibility {
     fn get_documentation(&self) -> RuleDocumentation {
         RuleDocumentation {
             id: RULE_ID.to_string(),
+            severity: DEFAULT_SEVERITY,
             description: "Explicitly mark visibility of state.".to_string(),
             category: "security".to_string(),
             example_config: "{\"id\": \"state-visibility\", \"severity\": \"WARNING\", \"data\": []}".to_string(),
