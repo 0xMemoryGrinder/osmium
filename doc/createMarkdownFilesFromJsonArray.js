@@ -100,7 +100,7 @@ async function main() {
     await fs.access(filepath, fs.constants.F_OK);
     createMarkdownFilesFromJsonArray(filepath);
   } catch (err) {
-    console.error('Le fichier n\'existe pas.', err);
+    console.error('The file does not exist.\n', err);
   }
 }
 
