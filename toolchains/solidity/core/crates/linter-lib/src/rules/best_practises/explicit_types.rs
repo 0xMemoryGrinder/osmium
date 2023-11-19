@@ -134,29 +134,29 @@ impl RuleType for ExplicitTypes {
                 good: vec![
                     Example {
                         description: "If explicit is selected".to_string(),
-                        code: "uint256 public variableName".to_string(),
+                        code: "uint256 public variableName;".to_string(),
                     },
                     Example {
                         description: "If implicit is selected".to_string(),
-                        code: "uint public variableName".to_string(),
+                        code: "uint public variableName;".to_string(),
                     },
                     Example {
                         description: "If explicit is selected".to_string(),
-                        code: "uint256 public variableName = uint256(5)".to_string(),
+                        code: "uint256 public variableName = uint256(5);".to_string(),
                     },
                 ],
                 bad: vec![
                     Example {
                         description: "If explicit is selected".to_string(),
-                        code: "uint public variableName".to_string(),
+                        code: "uint public variableName;".to_string(),
                     },
                     Example {
                         description: "If implicit is selected".to_string(),
-                        code: "uint256 public variableName".to_string(),
+                        code: "uint256 public variableName;".to_string(),
                     },
                     Example {
                         description: "At any setting".to_string(),
-                        code: "uint public variableName = uint256(5)".to_string(),
+                        code: "uint public variableName = uint256(5);".to_string(),
                     },
                 ],
             },

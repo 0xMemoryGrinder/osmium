@@ -51,21 +51,11 @@ impl RuleType for PayableFallback {
             examples: Examples {
                 good: vec![Example {
                     description: "Fallback is payable".to_string(),
-                    code: "
-                        pragma solidity 0.4.4;\n\n
-                        contract A {\n
-                        function () public payable {}\n
-                        }"
-                    .to_string(),
+                    code: "pragma solidity 0.4.4;\n\ncontract A {\n\tfunction () public payable {}\n}".to_string(),
                 }],
                 bad: vec![Example {
                     description: "Fallback is not payable".to_string(),
-                    code: "
-                        pragma solidity 0.4.4;\n\n 
-                        contract A {\n
-                        function () public {}\n
-                        }"
-                    .to_string(),
+                    code: "pragma solidity 0.4.4;\n\ncontract A {\n\tfunction () public {}\n}".to_string(),
                 }],
             },
         }

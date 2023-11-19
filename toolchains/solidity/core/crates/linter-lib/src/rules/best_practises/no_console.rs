@@ -105,7 +105,7 @@ impl RuleType for NoConsole {
             examples: Examples {
                 good: vec![],
                 bad: vec![Example{description: "No console.logX statements".to_string(),
-                    code: "console.log('test').".to_string()},
+                    code: "console.log('test');".to_string()},
                     Example{description: "No hardhat/console.sol import statements".to_string(),
                     code: "import 'hardhat/console.sol';".to_string()},
                     Example{description: "No forge-std console.sol & console2.sol import statements".to_string(),

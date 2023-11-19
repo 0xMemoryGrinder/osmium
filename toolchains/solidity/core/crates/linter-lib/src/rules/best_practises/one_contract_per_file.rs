@@ -68,14 +68,12 @@ impl RuleType for OneContractPerFile {
                 good: vec![Example {
                     description: "Imported object is being used".to_string(),
                     code:
-                        "import { ERC20 } from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\n
-                        ontract MyToken is ERC20 {}"
+                        "import { ERC20 } from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\nContract MyToken is ERC20 {}"
                             .to_string(),
                 }],
                 bad: vec![Example {
                     description: "Imported object is not being used".to_string(),
-                    code: "import { ERC20 } from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";
-                        contract B {}"
+                    code: "import { ERC20 } from \"@openzeppelin/contracts/token/ERC20/ERC20.sol\";\nContract B {}"
                         .to_string(),
                 }],
             },
