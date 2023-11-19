@@ -70,6 +70,8 @@ impl SolidLinter {
             res.push(rule.get_documentation())
         }
         res
+    }
+
     pub fn initialize_excluded_files(
         &mut self,
         excluded_filepaths: Option<&Vec<String>>,
