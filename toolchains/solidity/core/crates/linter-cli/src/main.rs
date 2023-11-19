@@ -70,19 +70,7 @@ fn print_result(results: Vec<LintResult>) {
 fn main() -> Result<(), SolidHunterError> {
     let mut args = Args::parse();
 
-    if !args.to_json {
-        println!();
-        println!("SolidHunter: Fast and efficient Solidity linter");
-        println!(
-            "By {} - v{} - GNU GPL v3",
-            env!("CARGO_PKG_AUTHORS"),
-            env!("CARGO_PKG_VERSION")
-        );
-        println!();
-    }
-
     if args.documentation {
-        println!("These are all rules documentations");
         let linter: SolidLinter = SolidLinter::new_fileless();
 
         let json = serde_json::to_string_pretty(&linter.get_documentation());
@@ -95,6 +83,17 @@ fn main() -> Result<(), SolidHunterError> {
             }
         }
         return Ok(());
+    }
+
+    if !args.to_json {
+        println!();
+        println!("SolidHunter: Fast and efficient Solidity linter");
+        println!(
+            "By {} - v{} - GNU GPL v3",
+            env!("CARGO_PKG_AUTHORS"),
+            env!("CARGO_PKG_VERSION")
+        );
+        println!();
     }
 
     if args.verbose {
