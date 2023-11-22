@@ -204,6 +204,13 @@ jobs:
           corepack prepare yarn@stable --activate
           yarn -v
 
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
       - name: Get workspace path
         id: workspace-path
         run: |

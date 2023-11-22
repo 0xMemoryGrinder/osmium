@@ -144,6 +144,13 @@ jobs:
           corepack enable
           corepack prepare yarn@stable --activate
 
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
@@ -202,6 +209,13 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
