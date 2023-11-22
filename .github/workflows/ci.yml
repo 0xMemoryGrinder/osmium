@@ -144,6 +144,8 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
+          yarn set version stable
+          yarn -v
 
       - name: Setup rust
         uses: actions-rs/toolchain@v1
@@ -211,6 +213,8 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@stable --activate
+          yarn set version stable
+          yarn -v
 
       - name: Setup rust
         uses: actions-rs/toolchain@v1
