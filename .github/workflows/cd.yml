@@ -29,6 +29,8 @@ jobs:
   
   publish-libraries:
     if : ${{ needs.setup.outputs.libraries != '[]' }}
+    # disable fail
+    continue-on-error: true
     runs-on: ubuntu-latest
     needs: setup
     strategy:
