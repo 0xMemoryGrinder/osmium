@@ -104,11 +104,16 @@ jobs:
 
   build:
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     needs: flatten-deps
     strategy:
       fail-fast: false
       matrix:
         workspace: ${{ fromJson(needs.flatten-deps.outputs.dependencies) }}
+        os: [ubuntu-20.04]
+        target: [x86_64-unknown-linux-gnu]
+        code-target: [linux-x64]
+        container: ["ubuntu:18.04"]
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
@@ -118,10 +123,6 @@ jobs:
           - os: windows-latest
             target: aarch64-pc-windows-msvc
             code-target: win32-arm64
-          - os: ubuntu-20.04
-            target: x86_64-unknown-linux-gnu
-            code-target: linux-x64
-            container: ubuntu:18.04
           - os: ubuntu-20.04
             target: aarch64-unknown-linux-gnu
             code-target: linux-arm64
@@ -170,11 +171,16 @@ jobs:
 
   test:
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     needs: flatten-deps
     strategy:
       fail-fast: false
       matrix:
         workspace: ${{ fromJson(needs.flatten-deps.outputs.dependencies) }}
+        os: [ubuntu-20.04]
+        target: [x86_64-unknown-linux-gnu]
+        code-target: [linux-x64]
+        container: ["ubuntu:18.04"]
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
@@ -184,10 +190,6 @@ jobs:
           - os: windows-latest
             target: aarch64-pc-windows-msvc
             code-target: win32-arm64
-          - os: ubuntu-20.04
-            target: x86_64-unknown-linux-gnu
-            code-target: linux-x64
-            container: ubuntu:18.04
           - os: ubuntu-20.04
             target: aarch64-unknown-linux-gnu
             code-target: linux-arm64
