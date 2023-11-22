@@ -103,68 +103,24 @@ jobs:
       - run: yarn workspace ${{ matrix.workspace.name }} run format
 
   build:
-    runs-on: ubuntu-latest
     needs: flatten-deps
     strategy:
       fail-fast: false
       matrix:
         workspace: ${{ fromJson(needs.flatten-deps.outputs.dependencies) }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-
-      - name: Setup yarn
-        id: setup-yarn
-        run: |
-          corepack enable
-          corepack prepare yarn@stable --activate
-
-      - name: install
-        run: cargo install wasm-pack
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - run: yarn install --frozen-lockfile
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        
-      - run: yarn workspace ${{ matrix.workspace.name }} run build
+    uses: ./.github/workflows/build.yml
+    with:
+      workspace: ${{ matrix.workspace.name }}
+      command: build
+      
 
   test:
-    runs-on: ubuntu-latest
     needs: flatten-deps
     strategy:
       fail-fast: false
       matrix:
         workspace: ${{ fromJson(needs.flatten-deps.outputs.dependencies) }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-
-      - name: Setup yarn
-        id: setup-yarn
-        run: |
-          corepack enable
-          corepack prepare yarn@stable --activate
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - run: yarn install --frozen-lockfile
-        if: steps.yarn-cache.outputs.cache-hit != 'true'
-        
-      - run: yarn workspace ${{ matrix.workspace.name }} run test
+    uses: ./.github/workflows/test.yml
+    with:
+      workspace: ${{ matrix.workspace.name }}
+      command: test

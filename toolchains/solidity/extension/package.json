@@ -18,7 +18,7 @@
   "activationEvents": [
     "onLanguage:solidity"
   ],
-  "main": "./dist/client.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {

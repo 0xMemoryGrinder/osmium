@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "license": "MIT",
   "scripts": {
-    "core:build": "cd crates/extension && make && cd ../..",
+    "core:build": "cargo build --workspace --release && node scripts/copy-core.js",
     "core:lint": "cargo clippy -- -D warnings",
     "core:format": "cargo fmt --check --all",
     "core:test": "cargo test --workspace",

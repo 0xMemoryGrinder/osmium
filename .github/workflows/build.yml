@@ -1,0 +1,91 @@
+on:
+  workflow_call:
+    inputs:
+      workspace:
+        required: true
+        type: string
+        description: "yarn workspace name"
+      command:
+        required: true
+        type: string
+        description: "yarn command to run"
+  workflow_dispatch:
+    inputs:
+      workspace:
+        required: true
+        type: string
+        description: "yarn workspace name"
+      command:
+        required: true
+        type: string
+        description: "yarn command to run"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            code-target: win32-x64
+          - os: windows-latest
+            target: i686-pc-windows-msvc
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            code-target: win32-arm64
+          - os: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+            code-target: linux-x64
+            #container: ubuntu:18.04
+          #- os: ubuntu-20.04
+          #  target: aarch64-unknown-linux-gnu
+          #  code-target: linux-arm64
+          #- os: ubuntu-20.04
+          #  target: arm-unknown-linux-gnueabihf
+          #  code-target: linux-armhf
+          - os: macos-11
+            target: x86_64-apple-darwin
+            code-target: darwin-x64
+          - os: macos-11
+            target: aarch64-apple-darwin
+            code-target: darwin-arm64
+    runs-on: ${{ matrix.os }}
+    #container: ${{ matrix.container }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+
+      - name: Setup yarn
+        id: setup-yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn set version stable
+          yarn -v
+
+      - name: Setup rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - run: yarn install --frozen-lockfile
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        
+      - run: yarn workspace ${{ inputs.workspace }} run ${{ inputs.command }}
+        env:
+          CARGO_BUILD_TARGET: ${{ matrix.target }}
+          

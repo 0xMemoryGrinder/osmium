@@ -18,17 +18,17 @@ let client: LanguageClient;
 
 export async function activate(context: ExtensionContext) {
 	// The server is implemented in node
-	const serverModule = context.asAbsolutePath(
-		path.join('dist', 'server.js')
+	const serverBinary = context.asAbsolutePath(
+		path.join('dist', 'linter-server')
 	);
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
 	const serverOptions: ServerOptions = {
-		run: { module: serverModule, transport: TransportKind.ipc },
+		run: { command: serverBinary, transport: TransportKind.stdio },
 		debug: {
-			module: serverModule,
-			transport: TransportKind.ipc,
+			command: serverBinary,
+			transport: TransportKind.stdio,
 		}
 	};
 
