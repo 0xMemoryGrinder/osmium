@@ -64,20 +64,20 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
-  publish:
+  compute-version:
     if : ${{ needs.setup.outputs.extensions != '[]' }}
-    runs-on: ubuntu-latest
-    needs: 
-      - setup
-      - publish-libraries
     strategy:
       fail-fast: false
       matrix:
         workspace: ${{ fromJson(needs.setup.outputs.extensions)}}
+    runs-on: ubuntu-latest
+    needs: 
+      - setup
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18.16.1'
@@ -142,7 +142,6 @@ jobs:
           script: |
             const fs = require('fs')
             console.log("Change type is : ", "${{ steps.find-new-version.outputs.version_type}}")
-
             if (fs.existsSync('.unstable') && "${{ steps.find-new-version.outputs.version_type}}" == "patch") {
               const patch = parseInt('${{steps.find-new-version.outputs.patch}}', 10);
               return "${{steps.find-new-version.outputs.major}}.${{steps.find-new-version.outputs.minor}}." + (patch + 1).toString();
@@ -153,38 +152,250 @@ jobs:
         run: |
           git tag "${{ matrix.workspace.name }}-${{ steps.tag.outputs.result }}"
           git push origin "${{ matrix.workspace.name }}-${{ steps.tag.outputs.result }}"
-      
+
+  publish:
+    if : ${{ needs.setup.outputs.extensions != '[]' }}
+    needs: 
+      - setup
+      - publish-libraries
+      - compute-version
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.setup.outputs.extensions)}}
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            code-target: win32-x64
+          - os: windows-latest
+            target: i686-pc-windows-msvc
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            code-target: win32-arm64
+          - os: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+            code-target: linux-x64
+            container: ubuntu:18.04
+          - os: ubuntu-20.04
+            target: aarch64-unknown-linux-gnu
+            code-target: linux-arm64
+          - os: ubuntu-20.04
+            target: arm-unknown-linux-gnueabihf
+            code-target: linux-armhf
+          - os: macos-11
+            target: x86_64-apple-darwin
+            code-target: darwin-x64
+          - os: macos-11
+            target: aarch64-apple-darwin
+            code-target: darwin-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.1'
+
+      - id: setup-yarn
+        # Install yarn 3 & workspace-tools
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn -v
+
+      - name: Get workspace path
+        id: workspace-path
+        run: |
+          echo "workspace-path=$(yarn workspaces info ${{ matrix.workspace.name }} --json | jq -r '.data[0].location')" >> $GITHUB_OUTPUT
+
+      - name: Get tag prefix
+        id: get-tag-prefix
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            const workspace = "${{ matrix.workspace.name }}";
+            const language = workspace.split('-')[1];
+            return language;
+
+      - name: Retrieve version
+        id: retrieve-version
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          prefix: "${{ steps.get-tag-prefix.outputs.result }}-"
+
+      - name: Extract semver
+        uses: actions/github-script@v6
+        id: tag
+        with:
+          result-encoding: string
+          script: |
+            const tag = '${{ steps.retrieve-version.outputs.tag }}';
+            const semver = tag.split('-')[1];
+            return semver;
       - name: Install dependencies
         run: |
           yarn install --immutable
-          cargo install wasm-pack
 
       - name: Build
         run: |
           yarn workspace ${{ matrix.workspace.name }} build
+        env:
+          CARGO_BUILD_TARGET: ${{ matrix.target }}
 
       - name: Publish
-        run: yarn workspace ${{ matrix.workspace.name }} run publish ${{ github.ref_name == 'dev' && '--pre-release' || '' }} ${{ steps.tag.outputs.result }}
+        run: yarn workspace ${{ matrix.workspace.name }} run publish ${{ github.ref_name == 'dev' && '--pre-release' || '' }} --target ${{matrix.code-target}} ${{ steps.tag.outputs.result }}
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
-              
-      #- name: Run latest-tag
-      #  uses: EndBug/latest-tag@latest
-      #  with:
-      #    # You can change the name of the tag or branch with this input.
-      #    # Default: 'latest'
-      #    ref: ${{ steps.tag.outputs.result }}
-      #
-      #    # If a description is provided, the action will use it to create an annotated tag. If none is given, the action will create a lightweight tag.
-      #    # Default: ''
-      #    description: Description for the tag
-
-      # - name: Create GitHub release
-      #   uses: Roang-zero1/github-create-release-action@v3
-      #   with:
-      #     created_tag: ${{ steps.find-new-version.outputs.version_tag }}
-      #     release_title: ${{ steps.find-new-version.outputs.version_tag }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#  publish:
+#    if : ${{ needs.setup.outputs.extensions != '[]' }}
+#    runs-on: ${{ matrix.os }}
+#    needs: 
+#      - setup
+#      - publish-libraries
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        workspace: ${{ fromJson(needs.setup.outputs.extensions)}}
+#        include:
+#          - os: windows-latest
+#            target: x86_64-pc-windows-msvc
+#            code-target: win32-x64
+#          - os: windows-latest
+#            target: i686-pc-windows-msvc
+#          - os: windows-latest
+#            target: aarch64-pc-windows-msvc
+#            code-target: win32-arm64
+#          - os: ubuntu-20.04
+#            target: x86_64-unknown-linux-gnu
+#            code-target: linux-x64
+#            container: ubuntu:18.04
+#          - os: ubuntu-20.04
+#            target: aarch64-unknown-linux-gnu
+#            code-target: linux-arm64
+#          - os: ubuntu-20.04
+#            target: arm-unknown-linux-gnueabihf
+#            code-target: linux-armhf
+#          - os: macos-11
+#            target: x86_64-apple-darwin
+#            code-target: darwin-x64
+#          - os: macos-11
+#            target: aarch64-apple-darwin
+#            code-target: darwin-arm64
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: '18.16.1'
+#
+#      - id: setup-yarn
+#        # Install yarn 3 & workspace-tools
+#        run: |
+#          corepack enable
+#          corepack prepare yarn@stable --activate
+#          yarn -v
+#
+#      - name: Get workspace path
+#        id: workspace-path
+#        run: |
+#          echo "workspace-path=$(yarn workspaces info ${{ matrix.workspace.name }} --json | jq -r '.data[0].location')" >> $GITHUB_OUTPUT
+#
+#      - name: Check .unstable
+#        id: check-unstable
+#        run: |
+#          cd ${{ steps.workspace-path.outputs.workspace-path }}
+#          if [ -f ".unstable" ]; then
+#            echo "is-unstable=true" >> $GITHUB_OUTPUT
+#          else
+#            echo "is-unstable=false" >> $GITHUB_OUTPUT
+#          fi
+#
+#      - name: Get tag prefix
+#        id: get-tag-prefix
+#        uses: actions/github-script@v6
+#        with:
+#          result-encoding: string
+#          script: |
+#            const workspace = "${{ matrix.workspace.name }}";
+#            const language = workspace.split('-')[1];
+#            return language;
+#
+#      - uses: paulhatch/semantic-version@d43966692519e4a5d4423b3da1b4b903c58c8f6b
+#        id: find-new-version
+#        with:
+#          # The prefix to use to identify tags
+#          tag_prefix: "${{ steps.get-tag-prefix.outputs.result }}-"
+#          # A string which, if present in a git commit, indicates that a change represents a
+#          # major (breaking) change, supports regular expressions wrapped with '/'
+#          major_pattern: "!:"
+#          # Same as above except indicating a minor change, supports regular expressions wrapped with '/'
+#          minor_pattern: "/feat\\(?/"
+#          # A string to determine the format of the version output
+#          version_format: "${major}.${minor}.${patch}"
+#          # If this is set to true, *every* commit will be treated as a new version.
+#          bump_each_commit: false
+#          # If true, the body of commits will also be searched for major/minor patterns to determine the version type.
+#          search_commit_body: false
+#          # Prevents pre-v1.0.0 version from automatically incrementing the major version.
+#          # If enabled, when the major version is 0, major releases will be treated as minor and minor as patch. Note that the version_type output is unchanged.
+#          enable_prerelease_mode: ${{ steps.check-unstable.outputs.is-unstable }}
+#
+#      - name: Normalize version
+#        uses: actions/github-script@v6
+#        id: tag
+#        with:
+#          result-encoding: string
+#          script: |
+#            const fs = require('fs')
+#            console.log("Change type is : ", "${{ steps.find-new-version.outputs.version_type}}")
+#
+#            if (fs.existsSync('.unstable') && "${{ steps.find-new-version.outputs.version_type}}" == "patch") {
+#              const patch = parseInt('${{steps.find-new-version.outputs.patch}}', 10);
+#              return "${{steps.find-new-version.outputs.major}}.${{steps.find-new-version.outputs.minor}}." + (patch + 1).toString();
+#            } else
+#              return "${{steps.find-new-version.outputs.major}}.${{steps.find-new-version.outputs.minor}}.${{steps.find-new-version.outputs.patch}}"
+#
+#      - name: Set tag
+#        run: |
+#          git tag "${{ matrix.workspace.name }}-${{ steps.tag.outputs.result }}"
+#          git push origin "${{ matrix.workspace.name }}-${{ steps.tag.outputs.result }}"
+#      
+#      - name: Install dependencies
+#        run: |
+#          yarn install --immutable
+#
+#      - name: Build
+#        run: |
+#          yarn workspace ${{ matrix.workspace.name }} build
+#
+#      - name: Publish
+#        run: yarn workspace ${{ matrix.workspace.name }} run publish ${{ github.ref_name == 'dev' && '--pre-release' || '' }} ${{ steps.tag.outputs.result }}
+#        env:
+#          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+#          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+#
+#              
+#      #- name: Run latest-tag
+#      #  uses: EndBug/latest-tag@latest
+#      #  with:
+#      #    # You can change the name of the tag or branch with this input.
+#      #    # Default: 'latest'
+#      #    ref: ${{ steps.tag.outputs.result }}
+#      #
+#      #    # If a description is provided, the action will use it to create an annotated tag. If none is given, the action will create a lightweight tag.
+#      #    # Default: ''
+#      #    description: Description for the tag
+#
+#      # - name: Create GitHub release
+#      #   uses: Roang-zero1/github-create-release-action@v3
+#      #   with:
+#      #     created_tag: ${{ steps.find-new-version.outputs.version_tag }}
+#      #     release_title: ${{ steps.find-new-version.outputs.version_tag }}
+#      #   env:
+#      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
