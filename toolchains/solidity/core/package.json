@@ -3,9 +3,7 @@
   "version": "0.0.2",
   "license": "MIT",
   "scripts": {
-    "core:build": "cargo build --workspace --release",
-    "core:build:dev": "cargo build --workspace --release && cp target/release/linter-server ../extension/dist",
-    "core:dist": "cp target/$1/linter-server ../extension/dist",
+    "core:build": "cargo build --workspace --release && node scripts/copy-core.js",
     "core:lint": "cargo clippy -- -D warnings",
     "core:format": "cargo fmt --check --all",
     "core:test": "cargo test --workspace",

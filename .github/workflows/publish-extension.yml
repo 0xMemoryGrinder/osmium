@@ -23,6 +23,7 @@ jobs:
             code-target: win32-x64
           - os: windows-latest
             target: i686-pc-windows-msvc
+            code-target: win32-ia32
           - os: windows-latest
             target: aarch64-pc-windows-msvc
             code-target: win32-arm64
@@ -101,10 +102,6 @@ jobs:
           yarn workspace ${{ inputs.workspace }} build
         env:
           CARGO_BUILD_TARGET: ${{ matrix.target }}
-
-      - name: Copy core binaries
-        run: |
-          yarn workspace ${{ inputs.workspace }} core-dist -- ${{ matrix.code-target }}
 
       - name: Publish
         run: yarn workspace ${{ inputs.workspace }} run publish ${{ github.ref_name == 'dev' && '--pre-release' || '' }} --target ${{matrix.code-target}} ${{ steps.tag.outputs.result }}

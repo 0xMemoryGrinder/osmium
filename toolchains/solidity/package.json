@@ -8,8 +8,6 @@
   "license": "MIT",
   "scripts": {
     "build": "cd core && yarn core:build && cd ../extension && yarn extension:build",
-    "build:dev": "cd core && yarn core:build:dev && cd ../extension && yarn extension:build",
-    "core-dist": "cd core && yarn core:dist",
     "lint": "cd core && yarn core:lint && cd ../extension && yarn extension:lint",
     "test": "cd core && yarn core:test && cd ../extension && yarn extension:test",
     "format": "cd core && yarn core:format && cd ../extension && yarn extension:format",
