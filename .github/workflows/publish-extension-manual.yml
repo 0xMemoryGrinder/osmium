@@ -1,0 +1,107 @@
+on:
+  workflow_call:
+    inputs:
+      workspace: 
+        required: true
+        type: string
+        description: |
+          The yarn workspace the extension is in.
+      pre-release:
+        required: false
+        type: boolean
+        description: |
+          Whether this is a pre-release.
+      version:
+        required: true
+        type: string
+        description: |
+          The version to publish.
+    secrets:
+      CARGO_REGISTRY_TOKEN:
+        required: true
+      VSCE_PAT:
+        required: true
+  workflow_dispatch:
+    inputs:
+      workspace: 
+        required: true
+        type: string
+        description: |
+          The yarn workspace the extension is in.
+      pre-release:
+        required: false
+        type: boolean
+        description: |
+          Whether this is a pre-release.
+      version:
+        required: true
+        type: string
+        description: |
+          The version to publish.
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            code-target: win32-x64
+          - os: windows-latest
+            target: i686-pc-windows-msvc
+            code-target: win32-ia32
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            code-target: win32-arm64
+          - os: ubuntu-20.04
+            target: x86_64-unknown-linux-gnu
+            code-target: linux-x64
+            #container: ubuntu:18.04
+          #- os: ubuntu-20.04
+          #  target: aarch64-unknown-linux-gnu
+          #  code-target: linux-arm64
+          #- os: ubuntu-20.04
+          #  target: arm-unknown-linux-gnueabihf
+          #  code-target: linux-armhf
+          - os: macos-11
+            target: x86_64-apple-darwin
+            code-target: darwin-x64
+          - os: macos-11
+            target: aarch64-apple-darwin
+            code-target: darwin-arm64
+    uses: ./.github/workflows/publish-targeted-extension.yml
+    with:
+      workspace: ${{ inputs.workspace }}
+      os: ${{ matrix.os }}
+      target: ${{ matrix.target }}
+      code-target: ${{ matrix.code-target }}
+      version: ${{ inputs.version }}
+      pre-release: ${{ inputs.pre-release }}
+  
+  commit-and-tag:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get tag prefix
+        id: get-tag-prefix
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const workspace = '${{ inputs.workspace }}';
+            const language = workspace.split('-')[1];
+            return language;
+      - name: Setup git config
+        run: |
+          git config --local user.email "ci@astrodevslabs.io"
+          git config --local user.name "Astrodevs CI"
+      - name: update package.json, commit and tag
+        run: |
+          yarn workspace ${{ inputs.workspace }}-extension version ${{ inputs.version }}
+          git add .
+          git commit -m "chore: release ${{ steps.get-tag-prefix.outputs.result }} ${{ inputs.version }}"
+          git tag -a ${{ inputs.version }} -m "Release ${{ steps.get-tag-prefix.outputs.result }} ${{ inputs.version }}"
+          git push origin ${{ github.ref }} --follow-tags
+        

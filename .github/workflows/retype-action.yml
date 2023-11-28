@@ -1,0 +1,52 @@
+name: Publish Retype powered website to GitHub Pages
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_and_publish:
+    name: Build and get documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'astrodevs-labs/osmium'
+          ref: 'main'
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build with Cargo
+        run: |
+          cd toolchains/solidity/core
+          cargo build
+
+      - name: Execute Binary to get documentation
+        run: |
+          cd toolchains/solidity/core
+          ./target/debug/solidhunter -d > ../../../doc/documentation.json
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Build md from json
+        run: |
+          cd ./doc
+          node createMarkdownFilesFromJsonArray.js documentation.json
+
+      - uses: retypeapp/action-build@latest
+        with:
+          config: ./doc/retype.yml
+
+      - uses: retypeapp/action-github-pages@latest
+        with:
+          update-branch: true

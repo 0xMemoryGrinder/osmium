@@ -1,0 +1,122 @@
+on:
+  workflow_call:
+    inputs:
+      workspace: 
+        required: true
+        type: string
+        description: |
+          The extension's yarn workspace the extension is part of.
+      os:
+        required: true
+        type: string
+        description: |
+          The operating system to run the publish on.
+      target:
+        required: true
+        type: string
+        description: |
+          The rust target to build with to publish.
+      code-target:
+        required: true
+        type: string
+        description: |
+          The vscode target to publish to.
+      version:
+        required: true
+        type: string
+        description: |
+          The version to publish.
+      pre-release:
+        required: false
+        type: boolean
+        description: |
+          Whether to publish as a pre-release.
+  workflow_dispatch:
+    inputs:
+      workspace: 
+        required: true
+        type: string
+        description: |
+          The extension's yarn workspace the extension is part of.
+      os:
+        required: true
+        type: string
+        description: |
+          The operating system to run the publish on.
+      target:
+        required: true
+        type: string
+        description: |
+          The rust target to build with to publish.
+      code-target:
+        required: true
+        type: string
+        description: |
+          The vscode target to publish to.
+      version:
+        required: true
+        type: string
+        description: |
+          The version to publish.
+      pre-release:
+        required: false
+        type: boolean
+        description: |
+          Whether to publish as a pre-release.
+
+jobs:
+  publish:
+    runs-on: ${{ inputs.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.1'
+
+      - name: Setup yarn
+        id: setup-yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn set version stable
+          yarn -v
+
+      - name: Setup rust
+        if: ${{ inputs.target }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ inputs.target }}
+          override: true
+      
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+
+      - name: Build
+        run: yarn workspace ${{ inputs.workspace }} run build
+
+      - name: Publish
+        run: yarn workspace ${{ inputs.workspace }}-extension run extension:publish ${{ inputs.pre-release && '--pre-release' || '' }} ${{ inputs.version }} --target ${{ inputs.code-target }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+            
