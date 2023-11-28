@@ -1,0 +1,74 @@
+name: Auto CD
+
+on:
+  workflow_call:
+
+
+jobs:
+  find-last-commit:
+    runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.last-commit.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get Last Commit
+        id: last-commit
+        run: echo "commit=$(git log --oneline HEAD~1 -1 --format=format:%H)" >> $GITHUB_OUTPUT
+
+  setup:
+    needs: find-last-commit
+    uses: ./.github/workflows/detect-workspace-changes.yml
+    with:
+      from: ${{ github.sha }}
+      since: ${{ needs.find-last-commit.outputs.commit }}
+  
+  publish-libraries:
+    if : ${{ needs.setup.outputs.libraries != '[]' && github.ref_name == 'main' }}
+    needs: setup
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.setup.outputs.libraries)}}
+    uses: ./.github/workflows/publish-library.yml
+    with:
+      workspace: ${{ matrix.workspace.name }}
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+
+  
+  publish-core:
+    if: ${{ needs.setup.outputs.extensions != '[]' && github.ref_name == 'main' }}
+    needs: 
+      - setup
+      - publish-libraries
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.setup.outputs.extensions)}}
+    uses: ./.github/workflows/publish-core.yml
+    with:
+      workspace: ${{ matrix.workspace.name }}
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+  publish-extensions:
+    if : ${{ needs.setup.outputs.extensions != '[]' }}
+    needs: 
+      - setup
+      - publish-libraries
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.setup.outputs.extensions)}}
+    uses: ./.github/workflows/publish-extension-auto.yml
+    with:
+      workspace: ${{ matrix.workspace.name }}
+      pre-release: ${{ github.ref_name != 'main' }}
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}

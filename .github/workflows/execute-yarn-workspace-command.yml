@@ -1,0 +1,122 @@
+on:
+  workflow_call:
+    inputs:
+      workspace:
+        description: 'The yarn workspace to execute the command in'
+        required: true
+        type: string
+      command:
+        required: true
+        type: string
+        description: 'The command to execute in the workspace'
+      os:
+        required: false
+        type: string
+        description: 'The operating system to execute the command in'
+      target:
+        required: false
+        type: string
+        description: 'The rust target to setup rust with'
+    secrets:
+      CARGO_REGISTRY_TOKEN:
+        required: true
+      VSCE_PAT:
+        required: true
+  workflow_dispatch:
+    inputs:
+      workspace:
+        description: 'The yarn workspace to execute the command in'
+        required: true
+        type: string
+      command:
+        required: true
+        type: string
+        description: 'The command to execute in the workspace'
+      os:
+        required: false
+        type: string
+        description: 'The operating system to execute the command in'
+      target:
+        required: false
+        type: string
+        description: 'The rust target to setup rust with'
+
+jobs:
+  determine-os:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.determine-os.outputs.os }}
+    steps:
+      - name: Determine OS
+        id: determine-os
+        env:
+          OS_INPUT: ${{ inputs.os }}
+        run: |
+          if [[ -z OS_INPUT  ]]; then
+          echo "os=${{inputs.os}}" >> $GITHUB_OUTPUT 
+          else
+            echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
+          fi
+  
+  main:
+    needs: determine-os
+    runs-on: ${{ needs.determine-os.outputs.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.1'
+
+      - name: Setup yarn
+        id: setup-yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn set version stable
+          yarn -v
+
+      - name: Setup rust
+        if: ${{ inputs.target }}
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ inputs.target }}
+          override: true
+      
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+          
+      - name: Run command (with target)
+        if: ${{ inputs.target }}
+        run: yarn workspace ${{ inputs.workspace }} run ${{ inputs.command }}
+        env:
+          CARGO_BUILD_TARGET: ${{ inputs.target }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Run command (without target)
+        if: ${{ !inputs.target }}
+        run: yarn workspace ${{ inputs.workspace }} run ${{ inputs.command }}
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+  
