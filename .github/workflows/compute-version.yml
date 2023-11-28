@@ -37,9 +37,22 @@ jobs:
       steps:
         - uses: actions/checkout@v3
           with:
+            fetch-depth: 0
             fetch-tags: true
+
+        - name: Setup yarn
+          id: setup-yarn
+          run: |
+            corepack enable
+            corepack prepare yarn@stable --activate
+            yarn set version stable
+            yarn -v
+
+
+
+
         - name: Get tag prefix
-          id: get-tag-prefix
+          id: get-language
           uses: actions/github-script@v6
           with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,11 +60,17 @@ jobs:
               const workspace = '${{ inputs.workspace }}';
               const language = workspace.split('-')[1];
               return language;
+
+        - name: Get tag prefix
+          id: get-tag-prefix
+          run: |
+            echo "result=${{ steps.get-language.outputs.result }}-" >> $GITHUB_OUTPUT
+
         - name: Retrieve tag version
           id: retrieve-version
           uses: "WyriHaximus/github-action-get-previous-tag@v1"
           with:
-            prefix: "${{ steps.get-tag-prefix.outputs.result }}-"
+            prefix: ${{ steps.get-tag-prefix.outputs.result }}
     
         - name: Extract tag semver
           uses: actions/github-script@v6
@@ -66,17 +85,17 @@ jobs:
         - name: Get workspace path
           id: workspace-path
           run: |
-            echo "workspace-path=$(yarn workspaces info ${{ inputs.workspace }} --json | jq -r '.data[0].location')" >> $GITHUB_OUTPUT
+            echo workspace-path=$(yarn workspaces list --json | jq -r 'select(.name == "${{ inputs.workspace }}") | .location') >> $GITHUB_OUTPUT
 
         - name: Extract package.json version
           id: package-version
-          working-directory: ${{ steps.workspace-path.outputs.result }}
           run: |
-            echo "version=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+            ls
+            echo "version=$(jq -r '.version' '${{steps.workspace-path.outputs.workspace-path}}/package.json')" >> $GITHUB_OUTPUT
 
         - name: Extension id
           id: extension-id
-          run: echo "id=osmiumtoolchains.osmium-${{ steps.get-tag-prefix.outputs.result}}-extension" >> $GITHUB_OUTPUT
+          run: echo "id=osmiumtoolchains.osmium-${{ steps.get-language.outputs.result}}-extension" >> $GITHUB_OUTPUT
 
         # Request the marketplace api for the latest version
         - name: Get latest version from marketplace
@@ -87,27 +106,37 @@ jobs:
             method: 'POST'
             customHeaders: '{"Content-Type": "application/json", "Accept": "application/json;api-version=6.0-preview.1"}'
             data: '{
-              filters: [
+              "filters": [
                 {
-                criteria: [
+                "criteria": [
                     {
-                    filterType: 8, 
-                    value: "Microsoft.VisualStudio.Code"
+                    "filterType": 8, 
+                    "value": "Microsoft.VisualStudio.Code"
                     },
                     {
-                    filterType: 10,
-                    value: ${{ steps.extension-id.outputs.id }}
+                    "filterType": 10,
+                    "value": "${{ steps.extension-id.outputs.id }}"
                     }
                 ],
-                pageNumber: 1,
-                pageSize: 100,
-                sortBy: 0,
-                sortOrder: 0
+                "pageNumber": 1,
+                "pageSize": 100,
+                "sortBy": 0,
+                "sortOrder": 0
                 }
               ],
-              assetTypes: [],
-              flags: 0
+              "assetTypes": [],
+              "flags": 0
               }'
+
+        - name: Extract marketplace version
+          id: marketplace-version
+          uses: actions/github-script@v6
+          with:
+            result-encoding: string
+            script: |
+              const response = JSON.parse('${{ steps.get-marketplace-version.outputs.response }}');
+              const version = response.results[0].extensions[0].versions[0].version;
+              return version;
 
         - name: Normalize version
           id: normalize-version
@@ -115,7 +144,7 @@ jobs:
           with:
             script: |
               const packageVersion = '${{ steps.package-version.outputs.version }}';
-              const marketplaceVersion = JSON.parse('${{ steps.get-marketplace-version.outputs.response }}').results[0].extensions[0].versions[0].version;
+              const marketplaceVersion = '${{ steps.marketplace-version.outputs.result }}';
               const tag = '${{ steps.tag.outputs.result }}';
 
               if (${{inputs.compute-version}}) {
@@ -130,4 +159,11 @@ jobs:
                 return packageVersion;
               }
 
-              
+        - name: Debug
+          run: |
+            echo "package-version=${{ steps.package-version.outputs.version }}"
+            echo "marketplace-version=${{ steps.marketplace-version.outputs.result }}"
+            echo "tag=${{ steps.tag.outputs.result }}"
+            echo "result=${{ steps.normalize-version.outputs.result }}"
+
+# tr command to remove " in stirng
