@@ -78,12 +78,28 @@ jobs:
       code-target: ${{ matrix.code-target }}
       version: ${{ inputs.version }}
       pre-release: ${{ inputs.pre-release }}
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
   
   commit-and-tag:
     needs: publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup yarn
+        id: setup-yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          yarn set version stable
+          yarn -v
+
+      - name: Install
+        run: |
+          yarn install --frozen-lockfile
+
       - name: Get tag prefix
         id: get-tag-prefix
         uses: actions/github-script@v6
@@ -93,10 +109,12 @@ jobs:
             const workspace = '${{ inputs.workspace }}';
             const language = workspace.split('-')[1];
             return language;
+    
       - name: Setup git config
         run: |
           git config --local user.email "ci@astrodevslabs.io"
           git config --local user.name "Astrodevs CI"
+
       - name: update package.json, commit and tag
         run: |
           yarn workspace ${{ inputs.workspace }}-extension version ${{ inputs.version }}
