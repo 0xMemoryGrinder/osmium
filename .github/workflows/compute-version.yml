@@ -74,6 +74,10 @@ jobs:
           run: |
             echo "version=$(jq -r '.version' package.json)" >> $GITHUB_ENV
 
+        - name: Extension id
+          id: extension-id
+          run: echo "id=osmiumtoolchains.osmium-${{ steps.get-tag-prefix.outputs.result}}-extension" >> $GITHUB_OUTPUT
+
         # Request the marketplace api for the latest version
         - name: Get latest version from marketplace
           id: get-marketplace-version
@@ -92,7 +96,7 @@ jobs:
                     },
                     {
                     filterType: 10,
-                    value: "osmiumtoolchains.osmium-${{ steps.get-tag-prefix.outputs.result}}-extension"
+                    value: ${{ steps.extension-id.outputs.id }}
                     }
                 ],
                 pageNumber: 1,
