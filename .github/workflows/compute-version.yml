@@ -1,0 +1,129 @@
+on:
+    workflow_call:
+      inputs:
+        workspace: 
+          required: true
+          type: string
+          description: |
+            The yarn workspace the extension is in.
+        compute-version:
+          required: false
+          type: boolean
+          description: |
+            Whether to compute a new version if the version already exists o the marketplace.
+      outputs:
+        version:
+          description: |
+            The version to publish the extension with.
+          value: ${{ jobs.compute-version.outputs.result }}
+    workflow_dispatch:
+      inputs:
+        workspace: 
+          required: true
+          type: string
+          description: |
+            The yarn workspace the extension is in.
+        compute-version:
+          required: false
+          type: boolean
+          description: |
+            Whether to compute a new version if the version already exists o the marketplace.
+
+jobs:
+    compute-version:
+      outputs:
+        result: ${{ steps.normalize-version.outputs.result }}
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+          with:
+            fetch-tags: true
+        - name: Get tag prefix
+          id: get-tag-prefix
+          uses: actions/github-script@v6
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              const workspace = '${{ inputs.workspace }}';
+              const language = workspace.split('-')[1];
+              return language;
+        - name: Retrieve tag version
+          id: retrieve-version
+          uses: "WyriHaximus/github-action-get-previous-tag@v1"
+          with:
+            prefix: "${{ steps.get-tag-prefix.outputs.result }}-"
+    
+        - name: Extract tag semver
+          uses: actions/github-script@v6
+          id: tag
+          with:
+            result-encoding: string
+            script: |
+              const tag = '${{ steps.retrieve-version.outputs.tag }}';
+              const semver = tag.split('-')[1];
+              return semver;
+
+        - name: Get workspace path
+          id: workspace-path
+          run: |
+            echo "workspace-path=$(yarn workspaces info ${{ inputs.workspace }} --json | jq -r '.data[0].location')" >> $GITHUB_OUTPUT
+
+        - name: Extract package.json version
+          id: package-version
+          working-directory: ${{ steps.workspace-path.outputs.result }}
+          run: |
+            echo "version=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+
+        # Request the marketplace api for the latest version
+        - name: Get latest version from marketplace
+          id: get-marketplace-version
+          uses: fjogeleit/http-request-action@v1
+          with:
+            url: 'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery'
+            method: 'POST'
+            customHeaders: '{"Content-Type": "application/json", "Accept": "application/json;api-version=6.0-preview.1"}'
+            data: '{
+              filters: [
+                {
+                criteria: [
+                    {
+                    filterType: 8, 
+                    value: "Microsoft.VisualStudio.Code"
+                    },
+                    {
+                    filterType: 10,
+                    value: "osmiumtoolchains.osmium-${{ steps.get-tag-prefix.outputs.result}}-extension"
+                    }
+                ],
+                pageNumber: 1,
+                pageSize: 100,
+                sortBy: 0,
+                sortOrder: 0
+                }
+              ],
+              assetTypes: [],
+              flags: 0
+              }'
+
+        - name: Normalize version
+          id: normalize-version
+          uses: "actions/github-script@v6"
+          with:
+            script: |
+              const packageVersion = '${{ steps.package-version.outputs.version }}';
+              const marketplaceVersion = JSON.parse('${{ steps.get-marketplace-version.outputs.response }}').results[0].extensions[0].versions[0].version;
+              const tag = '${{ steps.tag.outputs.result }}';
+
+              if (${{inputs.compute-version}}) {
+                if (packageVersion === marketplaceVersion && packageVersion === tag) {
+                  return packageVersion.split('.').map((v, i) => i === 2 ? parseInt(v) + 1 : v).join('.');
+                } else if (packageVersion !== marketplaceVersion) {
+                  return packageVersion;
+                } else {
+                  return packageVersion.split('.').map((v, i) => i === 2 ? parseInt(v) + 1 : v).join('.');
+                }
+              } else {
+                return packageVersion;
+              }
+
+              

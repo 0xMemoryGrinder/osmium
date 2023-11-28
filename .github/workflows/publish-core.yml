@@ -1,0 +1,31 @@
+on:
+  workflow_call:
+    inputs:
+      workspace: 
+        required: true
+        type: string
+        description: |
+          The extension's yarn workspace the extension core is part of.
+    secrets:
+      CARGO_REGISTRY_TOKEN:
+        required: true
+      VSCE_PAT:
+        required: true
+  workflow_dispatch:
+    inputs:
+      workspace:
+        description: |
+          The extension's yarn workspace the extension core is part of.
+        required: true
+        type: string
+
+jobs:
+  publish:
+    uses: ./.github/workflows/execute-yarn-workspace-command.yml
+    with:
+      workspace: ${{ inputs.workspace }}-core
+      command: core:publish
+    secrets:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        

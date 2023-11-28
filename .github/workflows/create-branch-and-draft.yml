@@ -53,7 +53,6 @@ jobs:
           REMOVE_UUID: ${{ steps.generate-uuid.outputs.uuid }}
 
       - name: Create pull request
-        if: steps.check-pr-exists.outputs.result.prExists != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
