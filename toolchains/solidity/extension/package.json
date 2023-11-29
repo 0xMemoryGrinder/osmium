@@ -2,7 +2,7 @@
   "name": "osmium-solidity-extension",
   "displayName": "Osmium Solidity",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "OsmiumToolchains",
   "repository": {
     "type": "git",
