@@ -120,6 +120,6 @@ jobs:
           yarn workspace ${{ inputs.workspace }}-extension version ${{ inputs.version }}
           git add .
           git commit -m "chore: release ${{ steps.get-tag-prefix.outputs.result }} ${{ inputs.version }}"
-          git tag -a ${{ inputs.version }} -m "Release ${{ steps.get-tag-prefix.outputs.result }} ${{ inputs.version }}"
+          git tag -a "${{steps.get-tag-prefix.outputs.result}}-${{ inputs.version }}" -m "Release ${{ steps.get-tag-prefix.outputs.result }} ${{ inputs.version }}"
           git push origin ${{ github.ref }} --follow-tags
         
