@@ -1,3 +1,5 @@
+name: Detect workspaces changes
+
 on:
   workflow_call:
     inputs:

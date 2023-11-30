@@ -1,3 +1,5 @@
+name: Publish extension auto
+
 on:
   workflow_call:
     inputs:

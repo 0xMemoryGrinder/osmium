@@ -1,3 +1,5 @@
+name: Publish extension manual
+
 on:
   workflow_call:
     inputs:

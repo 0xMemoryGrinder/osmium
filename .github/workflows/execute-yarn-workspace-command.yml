@@ -1,3 +1,5 @@
+name: Execute yarn workspace command
+
 on:
   workflow_call:
     inputs:
@@ -53,9 +55,9 @@ jobs:
           OS_INPUT: ${{ inputs.os }}
         run: |
           if [[ -z OS_INPUT  ]]; then
-          echo "os=${{inputs.os}}" >> $GITHUB_OUTPUT 
-          else
             echo "os=ubuntu-latest" >> $GITHUB_OUTPUT
+          else
+            echo "os=${{inputs.os}}" >> $GITHUB_OUTPUT 
           fi
   
   main:

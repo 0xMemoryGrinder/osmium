@@ -1,3 +1,5 @@
+name: Publish targeted extension
+
 on:
   workflow_call:
     inputs:
